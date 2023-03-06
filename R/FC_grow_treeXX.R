@@ -10,7 +10,7 @@ speciateatx=function(tr, tip){
   return(tr)
 }
 
-grow.tree <-function(speciesMatrix, MatrixList, pine, abcd) {
+grow.treeX <-function(speciesMatrix, MatrixList, pine, abcd) {
 
   tree <- pine
   tampa <- unlist(speciesMatrix)

@@ -274,7 +274,7 @@ ETBDspaceSYM = function(initialtree,
 
     ###add the symp species onto the allotree
     full<-
-      grow.tree(symp_sp, matrix_list1, allotree, abcd)
+      grow.treeX(symp_sp, matrix_list1, allotree, abcd)
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
@@ -510,9 +510,6 @@ ETBDspaceSYM = function(initialtree,
           etip[[o]] <- matrix_list5[[o]]
         }
       }
-
-
-
 
       ##turning probabilities greater than 1 to 1 if that happens somehow?
       for (o in 1:length(matrix_list5)) {

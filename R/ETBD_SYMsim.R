@@ -15,11 +15,11 @@
 # source("FC_DeleteExtinct.R")
 # source("FC_DeleteDups.R")
 # install.packages("ETBDsim")
- library(ETBDsim)
+# library(ETBDsim)
 
 
 
-ETBDspaceSYM = function(initialtree,
+ETBDspaceSYMer = function(initialtree,
                      t = 10,
                      Jmax = 1000,
                      JmaxV = c(1000, 4000),
@@ -68,7 +68,6 @@ ETBDspaceSYM = function(initialtree,
   # GEO = F
   # LOGNRM = T
   '%!in%' <- function(x,y)!('%in%'(x,y))
-
 
   #initial tree with 100 dist
   {
