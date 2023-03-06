@@ -1,0 +1,11 @@
+Package: ETBDsim
+Type: Package
+Title: A simulator for ETBD (Equilibrium Theory of Biodiversity Dynamics)
+Version: 0.1.0
+Author: Grace Ridder
+Maintainer: The package maintainer <yourself@somewhere.net>
+Description: More about what it does (maybe more than one line)
+    Use four spaces when indenting paragraphs within the Description.
+License: What license is it under?
+Encoding: UTF-8
+LazyData: true
