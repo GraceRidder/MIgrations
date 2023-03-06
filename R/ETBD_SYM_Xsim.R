@@ -263,9 +263,6 @@ ETBDspaceSYM = function(initialtree,
     symp_sp <- DeleteDups(symp_sp)
 
 
-
-
-
     temptree <- tree
     allotree <- tree
 
