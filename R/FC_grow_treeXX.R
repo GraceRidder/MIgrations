@@ -1,16 +1,7 @@
 ##### tree function
 ######
 
-speciateatx=function(tr, tip){
-  names=as.factor(trip)
-  tree=ape::as.phylo(~names)
-  tree$edge.length=rep(1,2)
-  subtreetobind= tree
-  pine=ape::bind.tree(pine,subtreetobind,where=which(pine$tip.label==tip))
-  return(tr)
-}
-
-grow.treeX <-function(speciesMatrix, MatrixList, pine, abcd) {
+grow.treeX <-function(speciesMatrix, pine, abcd) {
 
   tree <- pine
   tampa <- unlist(speciesMatrix)
@@ -31,19 +22,24 @@ grow.treeX <-function(speciesMatrix, MatrixList, pine, abcd) {
 
       trip2[[f]] <- trip
 
-
       names=as.factor(trip)
       tree=ape::as.phylo(~names)
       tree$edge.length=rep(1,2)
       subtreetobind= tree
       pine =ape::bind.tree(pine,subtreetobind,where=which(pine$tip.label==temp[f]))
+      pine$node.label[length(pine$node.label)] <- temp[f]
+
+
 
     }
   }
 
-
-  results = list(tree = pine, trip2 = trip2, abcd = abcd)
+  results = list(tree = tr, trip2 = trip2, abcd = abcd)
 
   return(results)
 
 }
+
+
+
+

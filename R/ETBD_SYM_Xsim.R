@@ -202,11 +202,13 @@ ETBDspaceSYM = function(initialtree,
 
 
 
+  tree <- makeNodeLabel(pine, method ="number")
+
+
 
   for (ipa in 1:t)
 
   {
-
 
     #start
     matrix_list0 <- matrix_list6
@@ -271,7 +273,7 @@ ETBDspaceSYM = function(initialtree,
 
     ###add the symp species onto the allotree
     full<-
-      grow.treeX(symp_sp, matrix_list1, allotree, abcd)
+      grow.treeX(sym_sp, allotree, abcd)
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
@@ -626,7 +628,6 @@ ETBDspaceSYM = function(initialtree,
 
 }
 }
-
 
 
 
