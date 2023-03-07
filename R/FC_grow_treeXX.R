@@ -3,6 +3,8 @@
 
 grow.treeX <-function(speciesMatrix, pine, abcd) {
 
+ # pine <- ape::makeNodeLabel(allotree, method ="number")
+
   tree <- pine
   tampa <- unlist(speciesMatrix)
   temp <- unique(tampa)
@@ -26,15 +28,14 @@ grow.treeX <-function(speciesMatrix, pine, abcd) {
       tree=ape::as.phylo(~names)
       tree$edge.length=rep(1,2)
       subtreetobind= tree
+      subtreetobind <- ape::makeNodeLabel(subtreetobind, method ="number")
+      subtreetobind$node.label <- temp[f]
       pine =ape::bind.tree(pine,subtreetobind,where=which(pine$tip.label==temp[f]))
-      pine$node.label[length(pine$node.label)] <- temp[f]
-
-
 
     }
   }
 
-  results = list(tree = tr, trip2 = trip2, abcd = abcd)
+  results = list(tree = pine, trip2 = trip2, abcd = abcd)
 
   return(results)
 

@@ -202,7 +202,7 @@ ETBDspaceSYM = function(initialtree,
 
 
 
-  tree <- makeNodeLabel(pine, method ="number")
+  tree <- ape::makeNodeLabel(tree, method ="number")
 
 
 
@@ -273,7 +273,7 @@ ETBDspaceSYM = function(initialtree,
 
     ###add the symp species onto the allotree
     full<-
-      grow.treeX(sym_sp, allotree, abcd)
+      grow.treeX(symp_sp, allotree, abcd)
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
@@ -601,7 +601,7 @@ ETBDspaceSYM = function(initialtree,
       is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
       B <- ipa/10
       if (is.wholenumber(B)){
-        print(paste('one site ...', ipa))
+        print(paste('one site with nodes ...', ipa))
       }
 
 
