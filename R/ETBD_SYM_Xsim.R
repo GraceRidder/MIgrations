@@ -9,6 +9,9 @@
 
 
 
+
+
+
 myFun <- function(n = 100000) {
   a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
   paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
@@ -599,9 +602,9 @@ ETBDspaceSYM = function(initialtree,
 
       ## counting ten time steps
       is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
-      B <- ipa/10
+      B <- ipa/100
       if (is.wholenumber(B)){
-        print(paste('one site with nodes ...', ipa))
+        print(paste('relax everything is okay ...', ipa))
       }
 
 
