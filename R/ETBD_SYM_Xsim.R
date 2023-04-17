@@ -33,7 +33,7 @@ abcd <- abc
 # source("FC_DeleteExtinct.R")
 # source("FC_DeleteDups.R")
 # install.packages("ETBDsim")
- #library(ETBDsim)
+# library(ETBDsim)
 
 
 
@@ -52,7 +52,10 @@ ETBDspaceSYM = function(initialtree,
                      SADmarg = .1,
                      exparm = -0.7,
                      NegExpEx = T,
-                     isGrid = F)
+                     isGrid = F,
+                     ExpSpParm = 2,
+                     ExpSp = T
+                      )
 
 
 {{
@@ -85,6 +88,9 @@ ETBDspaceSYM = function(initialtree,
   # exparm = -0.9
   # GEO = F
   # LOGNRM = T
+  # ExpSpParm = 2
+  # ExpSp = T
+
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
 
@@ -230,9 +236,34 @@ ETBDspaceSYM = function(initialtree,
     }
 
 
-    #sympatrically speciating species
 
-    {
+    ExpSp = F
+    if (ExpSp) {
+
+    #calculate extinction probability
+
+    stip = list()
+    for (o in 1:length(matrix_list1)) {
+      if (NA %!in% matrix_list1[[o]]) {
+          speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
+        stip[[o]] <- speciationp
+      }
+    }
+
+    #as logical...
+    speciatinglog = list()
+    for (o in 1:length(matrix_list1)) {
+      if (!is.null(stip[[o]])) {
+        if (NA %!in% (stip[[o]])) {
+          splog = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, stip[[o]]))
+          speciatinglog[[o]] <- splog
+        } else {
+          speciatinglog[[o]] <- matrix_list1[[o]]
+        }
+      }
+    }
+} else {
+
       speciatinglog = list()
       for (o in 1:length(siteN)) {
         spec = as.logical(rbinom(length(matrix_list1[[o]]), 1, psymp))  ##probability of sympatric speciation psymp
@@ -263,7 +294,11 @@ ETBDspaceSYM = function(initialtree,
         symp_sp[[o]] <- speciatin
       }
 
-    }
+}
+
+
+
+
 
     symp_sp <- DeleteDups(symp_sp)
 
