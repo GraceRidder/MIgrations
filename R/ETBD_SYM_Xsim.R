@@ -54,7 +54,9 @@ ETBDspaceSYM = function(initialtree,
                      NegExpEx = T,
                      isGrid = F,
                      ExpSpParm = 2,
-                     ExpSp = T
+                     ExpSp = T,
+                     SPgrow = .25,
+                     splitparm = .25
                       )
 
 
@@ -213,7 +215,7 @@ ETBDspaceSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-
+  print("new version 5")
 
   for (ipa in 1:t)
 
@@ -224,7 +226,6 @@ ETBDspaceSYM = function(initialtree,
 
     ##deleting extinct species from matrix list 6 from previous step
     matrix_list1 <- DeleteExtinct(matrix_list0)
-
     #statment about site extinction
     for (thing in 1:length(matrix_list1)) {
       if (sum(matrix_list1[[thing]]) == 0) {
@@ -235,17 +236,23 @@ ETBDspaceSYM = function(initialtree,
       }
     }
 
+##growing species by SPgrow
 
+    if (ExpSp){
+      mat <- list()
+      for ( o in 1:length(matrix_list1)){
+        mat[[o]] <- matrix_list1[[o]] + (matrix_list1[[o]]*SPgrow)
+      }
+      matrix_list1 <-  mat
+    }
 
-    ExpSp = F
     if (ExpSp) {
-
-    #calculate extinction probability
 
     stip = list()
     for (o in 1:length(matrix_list1)) {
       if (NA %!in% matrix_list1[[o]]) {
-          speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
+         # speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
+          speciationp = ((matrix_list1[[o]][, 1])/sum(matrix_list1[[o]]))^ExpSpParm
         stip[[o]] <- speciationp
       }
     }
@@ -269,6 +276,8 @@ ETBDspaceSYM = function(initialtree,
         spec = as.logical(rbinom(length(matrix_list1[[o]]), 1, psymp))  ##probability of sympatric speciation psymp
         speciatinglog[[o]] = spec
       }
+}
+
 
       speciating = list()
       for (o in 1:length(siteN)) {
@@ -294,9 +303,6 @@ ETBDspaceSYM = function(initialtree,
         symp_sp[[o]] <- speciatin
       }
 
-}
-
-
 
 
 
@@ -315,7 +321,6 @@ ETBDspaceSYM = function(initialtree,
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
-
 
 
     #
@@ -386,7 +391,7 @@ ETBDspaceSYM = function(initialtree,
 
 
       #10% of parent population abundance
-      flop <- as.matrix(as.numeric(fax) * 0.1)
+      flop <- as.matrix(as.numeric(fax) * splitparm)
 
 
       ### pop is new species sizes and the new names
@@ -548,7 +553,7 @@ ETBDspaceSYM = function(initialtree,
         }
       }
 
-      ##turning probabilities greater than 1 to 1 if that happens somehow?
+      ##turning probabilities greater than 1 to 1
       for (o in 1:length(matrix_list5)) {
         if (!is.null(etip[[o]])) {
           for (i in 1:length(etip[[o]])) {
@@ -641,7 +646,6 @@ ETBDspaceSYM = function(initialtree,
       if (is.wholenumber(B)){
         print(paste('relax everything is okay ...', ipa))
       }
-
 
 
 
