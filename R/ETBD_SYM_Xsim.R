@@ -56,7 +56,8 @@ ETBDspaceSYM = function(initialtree,
                      ExpSpParm = 2,
                      ExpSp = T,
                      SPgrow = .25,
-                     splitparm = .25
+                     splitparm = .25,
+                     constantEX = .1
                       )
 
 
@@ -69,6 +70,7 @@ ETBDspaceSYM = function(initialtree,
   symp = list()
   symptrip = list()
   exsp = list()
+  trees = list()
 
 
   ##run these to run a time step individually
@@ -546,10 +548,11 @@ ETBDspaceSYM = function(initialtree,
           # extinctionp = 1 / (0.37 ^ 1.1) * exp(-1.1 * matrix_list5[[o]][, 1])
           if (NegExpEx) {
             extinctionp = exp(exparm * matrix_list5[[o]][, 1])
-          }
+            etip[[o]] <- extinctionp
+          } else {
+          extinctionp = constantEX
           etip[[o]] <- extinctionp
-        } else {
-          etip[[o]] <- matrix_list5[[o]]
+        }
         }
       }
 
@@ -654,12 +657,14 @@ ETBDspaceSYM = function(initialtree,
     #monitors of sizes and trees
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
+    trees[[ipa]] = tree
 
   }
 
   return(
     list(
       tree = tree,
+      trees = trees,
       #final tree
       #all trees by timeslice
       matrix_list = matrix_list6,
