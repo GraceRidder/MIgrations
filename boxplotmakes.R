@@ -61,13 +61,6 @@ legend("topleft", title = "Jmax", c("1600", "1200", "1000", "800"),
 
 
 
-eqs <- cbind(finaldatalist[[1]][1], finaldatalist[[2]][1], finaldatalist[[3]][1], finaldatalist[[4]][1])
-
-
-plot(as.numeric(eqs[3,]), typ)
-
-
-
 plot(as.numeric(eqs[6,]), typ = "l", xlab = "Jmax", ylab = "Equilibroum", col = "red", main = "Equilibrium", ylim = c(0,500))
 lines(as.numeric(eqs[5,]), typ = "l", col = "blue")
 lines(as.numeric(eqs[4,]), typ = "l", col = "orange")
@@ -324,8 +317,8 @@ plot(gam, type = "l", main = "Gamma through time", xlab = "time")
 library(parallel)
 
 
-Jmaxvalues <- c(1600)
-speciations <- c(2)
+Jmaxvalues <- c(800, 1200, 1600, 2000)
+speciations <- c(-2, -4, -6, -8, -10, -14)
 
 for (v in speciations){
   for (i in Jmaxvalues){
@@ -338,22 +331,24 @@ for (v in speciations){
 
       for (u in 1:length(trials)) {
         res1 = ETBDspaceSYM(
-          t = 500,
-          psymp = 0,
-          SRS = F,
+          t = 1000,
+          psymp = .3,
+          SRS = T,
           GEO = F,
-          LOGNRM = T,
+          LOGNRM = F,
           watchgrow = F,
           SADmarg = .1,
           siteN = 1,
-          JmaxV = 1600,
-          exparm = -6,
+          JmaxV = 2000,
+          exparm = -14,
           NegExpEx = T,
-          constantEX = 0,
-          ExpSpParm = 2,
+          constantEX = .00,
+          ExpSpParm = 1.6,
           ExpSp = T,
           SPgrow = 0,
           splitparm = .25,
+          bud = T,
+          split = F
         )
 
         reslist[[u]] <- res1
@@ -380,26 +375,126 @@ for (v in speciations){
 
 }
 
-wapper <- c()
-for (i in 1:10){
-apple <- maxlik.betasplit(rs[[i]]$reslist[[1]]$tree)
-app <- apple$max_lik
-wapper <- append(wapper, app)
+
+
+
+
+
+exts <- c()
+migsize <- c()
+for (o in 1:length(rs[[1]]$reslist[[1]]$mig)) {
+  migsize <- append(x, length(rs[[1]]$reslist[[1]]$mig[o][[1]][[1]][,1]))
+  e = 0
+  for (p in 1:length(rs[[1]]$reslist[[1]]$mig[o][[1]][[1]][,1])) {
+    if (0 == rs[[1]]$reslist[[1]]$mig[o][[1]][[1]][,1][p]) {
+      e <- e + 1
+    }
+  }
+exts <- append(exts, e)
 }
 
 
 
-Lg100 <- wapper
+
+exts <- c()
+migsize <- c()
+for (o in 1:length(res1$mig)) {
+  migsize <- append(migsize, length(res1$mig[o][[1]][[1]][,1]))
+  e = 0
+  for (p in 1:length(res1$mig[o][[1]][[1]][,1])) {
+    if (0 == res1$mig[o][[1]][[1]][,1][p]) {
+      e <- e + 1
+    }
+  }
+  exts <- append(exts, e)
+}
+
+plot(migsize, typ = "l")
+X<- drop.extinct(res1$tree)
+
+X$Nnode
+fileindex
+gammaStat(drop.extinct(res1$tree))
+maxlik.betasplit(drop.extinct(res1$tree))
+
+dev.off()
+plot(drop.extinct(res1$tree), cex = .1)
 
 
 
-boxplot(Lg100, Lg50, Lg25, Lg05, Lg005)
+
+
+lines(migsize, col = "purple")
+
+gammaStat(drop.extinct(LGres100$tree))
+gammaStat(drop.extinct(LGres1$tree))
+gammaStat(drop.extinct(LGres05$tree))
+gammaStat(drop.extinct(LGres02$tree))
+gammaStat(drop.extinct(res1$tree))
+
+gammaStat(drop.extinct(LSres100$tree))
+gammaStat(drop.extinct(LSres1$tree))
+gammaStat(drop.extinct(LSres05$tree))
+gammaStat(drop.extinct(LSres02$tree))
 
 
 
 
+maxlik.betasplit(drop.extinct(res1$tree))
+
+plot(drop.extinct(res1$tree), cex = .1)
+
+oldsize <- migsize - exts
+plot(migsize, typ = "l")
+lines(oldsize, col = "blue")
+
+sptot<- c()
+for ( i in 1:(length(migsize)-1)){
+  sptot <- append(sptot, migsize[i+1] - oldsize[i])
+}
+
+sptott <- append(sptot, 0)
+sprate <- sptott/oldsize
 
 
+D <- colMeans(matrix(sprate, 10))
 
+mean(D)
+
+plot(D)
+abline(lm(D ~ v))
+
+
+exrate <- exts/oldsize
+D <- colMeans(matrix(exrate, 10))
+plot(D)
+abline(lm(D ~ v))
+
+mean(D)
+y <- D
+
+
+fit1 <- lm(D~x)
+fit2 <- lm(y~poly(x,2,raw=TRUE))
+fit3 <- lm(y~poly(x,3,raw=TRUE))
+fit4 <- lm(y~poly(x,4,raw=TRUE))
+fit5 <- lm(y~poly(x,5,raw=TRUE))
+
+#create a scatterplot of x vs. y
+plot(x, D, pch=1, xlab='x', ylab='y')
+
+#define x-axis values
+x_axis <- seq(10, 500, length=15)
+
+#add curve of each model to plot
+lines(x_axis, predict(fit1, data.frame(x=x_axis)), col='green')
+lines(x_axis, predict(fit2, data.frame(x=x_axis)), col='red')
+lines(x_axis, predict(fit3, data.frame(x=x_axis)), col='purple')
+lines(x_axis, predict(fit4, data.frame(x=x_axis)), col='blue')
+lines(x_axis, predict(fit5, data.frame(x=x_axis)), col='orange')
+
+p <- lm(D~x)
+
+summary(p)
 
 
