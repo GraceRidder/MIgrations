@@ -46,6 +46,7 @@ ETBDspaceSYM = function(initialtree,
                      siteN = 2,
                      SRS = F,
                      GEO = F,
+                     NO = F,
                      LOGNRM = T,
                      psymp = .10,
                      watchgrow = F,
@@ -73,7 +74,7 @@ ETBDspaceSYM = function(initialtree,
   trees = list()
 
 
-  ##run these to run a time step individually
+  ##run these to run a time step individually for sim testing
   # ipa = 1
   # psymp = .2
   # pallo = .0
@@ -217,7 +218,7 @@ ETBDspaceSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version 5")
+  print("new version 32")
 
   for (ipa in 1:t)
 
@@ -510,6 +511,15 @@ ETBDspaceSYM = function(initialtree,
       }
     }
 
+    if (NO) {
+      if (length(unmatrixlist(matrix_list5)) > 5) {
+        xx <- MakeNOSAD(matrix_list5, JmaxV)
+        matrix_list5 <- xx
+
+      }
+    }
+
+
 
 
     if (NA %in% unlist(matrix_list5)) {
@@ -518,14 +528,6 @@ ETBDspaceSYM = function(initialtree,
         ipa
       )
     }
-
-
-
-
-
-
-
-
 
 
 
@@ -657,14 +659,14 @@ ETBDspaceSYM = function(initialtree,
     #monitors of sizes and trees
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
-    trees[[ipa]] = tree
+   # trees[[ipa]] = tree
 
   }
 
   return(
     list(
       tree = tree,
-      trees = trees,
+     #trees = trees,
       #final tree
       #all trees by timeslice
       matrix_list = matrix_list6,
