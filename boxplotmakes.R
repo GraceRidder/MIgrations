@@ -249,7 +249,7 @@ res1 = ETBDspaceSYM(
   constantEX = .005
 )
 
-res <- res1
+res <- rs[[1]]$reslist[[2]]
 
 X <- c()
 Xx <- c()
@@ -262,8 +262,20 @@ Xx <- c()
   }
 
 
+par(mfrow=c(1,1))
 
 plot(tpac, typ = "l", main="species richness through time", ylab = " species richness", xlab = "time")
+
+plot(dd, rowMeans(GAMSTUD)[200:1], typ = "l")
+
+
+d <- 0
+dd <- c()
+for ( i in 1:200){
+  d = d+50
+  dd <- append(dd, d)
+}
+dd
 
 plot(apac, typ = "l")
 
@@ -333,16 +345,16 @@ for (v in speciations){
         res1 = ETBDspaceSYM(
           t = 1000,
           psymp = .3,
-          SRS = T,
+          SRS = F,
           GEO = F,
-          LOGNRM = F,
+          LOGNRM = T,
           watchgrow = F,
           SADmarg = .1,
           siteN = 1,
           JmaxV = 2000,
-          exparm = -14,
+          exparm = -5,
           NegExpEx = T,
-          constantEX = .00,
+          constantEX = 0,
           ExpSpParm = 1.6,
           ExpSp = T,
           SPgrow = 0,
@@ -378,8 +390,7 @@ for (v in speciations){
 
 
 
-
-
+x <- c()
 exts <- c()
 migsize <- c()
 for (o in 1:length(rs[[1]]$reslist[[1]]$mig)) {
@@ -409,7 +420,12 @@ for (o in 1:length(res1$mig)) {
   exts <- append(exts, e)
 }
 
-plot(migsize, typ = "l")
+plot(migsize, typ = "l", col = "darkblue", xlab = "time", ylab = "diversity", lwd = "2")
+
+
+
+plot(increaseing, typ = "l", col = "darkblue", xlab = "time", ylab = "diversity", lwd = "2")
+
 X<- drop.extinct(res1$tree)
 
 X$Nnode
@@ -496,5 +512,54 @@ lines(x_axis, predict(fit5, data.frame(x=x_axis)), col='orange')
 p <- lm(D~x)
 
 summary(p)
+
+
+
+B1 <- rowMeans(BET)
+G1 <- rowMeans(GAMSTUD)
+tail(GAMSTUD)
+plot(BET[,1], typ = "l")
+
+### beta
+plot(rev(BET[,1]), typ = "l", col = "red", ylim = c(-3,10))
+lines(rev(BET[,9]), typ = "l", col = "red")
+lines(B[600:401], typ = "l", col = "red")
+lines(B[800:601], typ = "l", col = "red")
+lines(B[1000:801], typ = "l", col = "red")
+
+lines(B1[200:1], typ = "l", col = "blue")
+#lines(B1[400:201], typ = "l", col = "blue")
+lines(B1[600:401], typ = "l", col = "blue")
+lines(B1[800:601], typ = "l", col = "blue")
+lines(B1[1000:801], typ = "l", col = "blue")
+abline(h = 0)
+
+
+
+
+plot(rev(GAMSTUD[,1]), typ = "l", col = "red", ylim = c(-10,20))
+lines(rev(GAMSTUD[,5]), typ = "l", col = "red")
+
+
+
+abline(h = 0)
+
+
+
+plot(G1[190:0], typ = "l", col = "red", ylim = c(-10,10))
+lines(G1[20:1], typ = "l", col = "red")
+lines(G1[27:19], typ = "l", col = "red")
+lines(G1[36:28], typ = "l", col = "red")
+lines(G1[45:37], typ = "l", col = "red")
+lines(G1[54:46], typ = "l", col = "red")
+
+lines(G1[190:1], typ = "l", col = "blue")
+lines(G1[400:201], typ = "l", col = "blue")
+lines(G1[600:401], typ = "l", col = "blue")
+lines(G1[800:601], typ = "l", col = "blue")
+lines(G1[1000:801], typ = "l", col = "blue")
+lines(G1[1200:1001], typ = "l", col = "blue")
+lines(G1[1400:1201], typ = "l", col = "blue")
+abline(h = 0)
 
 
