@@ -218,7 +218,7 @@ ETBDspaceSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version 40")
+  print("new version 41")
 
   for (ipa in 1:t)
 
