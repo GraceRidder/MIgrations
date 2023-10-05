@@ -218,7 +218,7 @@ ETBDspaceSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version 32")
+  print("new version 40")
 
   for (ipa in 1:t)
 
@@ -276,7 +276,7 @@ ETBDspaceSYM = function(initialtree,
 
       speciatinglog = list()
       for (o in 1:length(siteN)) {
-        spec = as.logical(rbinom(length(matrix_list1[[o]]), 1, psymp))  ##probability of sympatric speciation psymp
+        spec = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, psymp))  ##probability of sympatric speciation psymp
         speciatinglog[[o]] = spec
       }
 }
