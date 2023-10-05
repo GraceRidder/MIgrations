@@ -1,15 +1,8 @@
 # Setting up workspace ----
-
 # If you are using Base R, this sets the file path to wherever this script is:
 #setwd(getSrcDirectory()[1])
-
 # On R-Studio, use:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
-
-
-
-
 
 
 myFun <- function(n = 100000) {
@@ -17,11 +10,9 @@ myFun <- function(n = 100000) {
   paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
 }
 
-
 abc <-myFun(1000000)
 
 abcd <- abc
-
 
 
 # Sourcing functions ----
