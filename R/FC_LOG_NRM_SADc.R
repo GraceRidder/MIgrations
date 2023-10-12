@@ -4,11 +4,6 @@ library(sads)
 MakeLogNormalSAD = function(matlist, sadmarg, Jmax){
 
 
-  # matlist <- matrix_list1
-  #  sadmarg <- .1
-  # Jmax <- c(4000, 8000, 12000, 16000, 20000, 24000, 28000, 32000, 36000, 40000, 44000, 48000)
-
-
   matnames <- unmatrixlist(matlist)
   matab <- unlist(matlist)
   reltol <- sadmarg
@@ -39,6 +34,8 @@ newb <- list()
     J <- Jax[i]
     S <- Sax[i]
 
+
+
 ####  log-normal
 mm <- 0 # mean
 ## so I just start with a mean of zero and increase it until I get close..
@@ -66,8 +63,9 @@ if (sum(newabund) < J){
 
   newabund<- newb
 
-
-
+  for (i in 1:length(matlist)) {
+    newabund[[i]] <- sort(newabund[[i]], decreasing = T)
+  }
 
 
 
@@ -77,11 +75,14 @@ if (sum(newabund) < J){
 ### if species have the same abundance they are randomly placed in different ranks (within the original rank zone)
 rankab <- matlist
 speciesrank <- matlist
+
 for (i in 1:length(matlist)){
   speciesrank[[i]] =rank(-matlist[[i]], ties.method = "random")
   rankab[[i]]<- newabund[[i]][speciesrank[[i]]]
 }
 
+
+matlist
 mat <- matlist
 for (i in 1:length(matlist)){
   for (k in 1:length(matlist[[i]])){
