@@ -24,7 +24,7 @@ The parameters governing a given simulation are specified here. These parameters
     <td>probability of sympatric specation</td>
   </tr>
   <tr>
-    <td>SAD</td>
+    <td>SRS</td>
     <td>if TRUE indicates a fishers log-series species abundnace distribution</td>
   </tr>
   <tr>
@@ -32,9 +32,13 @@ The parameters governing a given simulation are specified here. These parameters
     <td>if TRUE indicates a geometric species abundnace distribution</td>
   </tr>
   <tr>
-    <td>LOGNORM</td>
+    <td>LOGNRM</td>
     <td>if TRUE will indicate a log-normal species abundnace distribution</td>
   </tr>
+  <tr>
+    <td>NO</td>
+    <td>if TRUE indicates a constant species abundnace distribution</td>
+  </tr> 
   <tr>
     <td>watchgrow</td>
     <td>if TRUE allows animation of tree growth</td>
@@ -64,12 +68,24 @@ The parameters governing a given simulation are specified here. These parameters
     <td>if NegExpEx is TRUE this is the negative exponential parameter for extinciton</td>
   </tr>
   <tr>
+    <td>ExpSpParm</td>
+    <td>if ExpSp is TRUE this is the exponential parameter for speciation</td>
+  </tr>    
+  <tr>
+    <td>ExpSp</td>
+    <td>if ExpSp is TRUE speciation is modeled as bounded exponential function</td>
+  </tr>
+  <tr>
+   <td>splitmarg</td>
+    <td>the proportion of the population of the mother species that will split/or bud and be inheritated by the daughter species (controls the strength of heritability of population size)</td>
+  </tr> 
+  <tr>
    <td>split</td>
-    <td>a small portion (10%) of the parent species will split off and migrate, default = TRUE</td>
+    <td>a small portion (depending on splitmarg) of the parent species will split off and migrate, default = TRUE</td>
   </tr>
   <tr>
      <td>bud</td>
-    <td>if TRUE a small portion (10%) of the parent species will emerge leaving the origianl population of the parent species the same</td>
+    <td>if TRUE a small portion (depending on splitmarg) of the parent species will emerge leaving the origianl population of the parent species the same</td>
   </tr>
     <td>isGrid</td>
     <td>if TRUE the space configuration turns from linear to a grid conected with chebyshev distance</td>
