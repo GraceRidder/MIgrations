@@ -10,10 +10,9 @@ myFun <- function(n = 100000) {
   paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
 }
 
-abc <-myFun(1000000)
+abc <-myFun(3000000)
 
 abcd <- abc
-
 
 # Sourcing functions ----
 #  source("FC_namesSpecies.R")
@@ -209,7 +208,7 @@ ETBDspaceSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version 50")
+  print("new version 60")
 
   for (ipa in 1:t)
 
