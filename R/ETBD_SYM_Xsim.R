@@ -34,7 +34,7 @@ ETBDspaceSYM = function(initialtree,
                      split = T,
                      bud = F,
                      siteN = 2,
-                     DIST == "NORM",
+                     DIST = "NORM",
                      psymp = .10,
                      watchgrow = F,
                      SADmarg = .1,
@@ -477,7 +477,7 @@ ETBDspaceSYM = function(initialtree,
       plot(tree, cex = .5)
     }
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
-    if (DIST = "SRS") {
+    if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
         xx <- MakeSAD(matrix_list5, SADmarg, JmaxV)
         matrix_list5 <- xx
@@ -485,7 +485,7 @@ ETBDspaceSYM = function(initialtree,
     }
 
 
-    if (DIST = "GEO") {
+    if (DIST == "GEO") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
         xx <- MakeGEO(matrix_list5, JmaxV)
         matrix_list5 <- xx
@@ -493,7 +493,7 @@ ETBDspaceSYM = function(initialtree,
       }
     }
 
-    if (DIST = "NORM") {
+    if (DIST == "NORM") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
         xx <- MakeLogNormalSAD(matrix_list5, SADmarg, JmaxV)
         matrix_list5 <- xx
@@ -501,7 +501,7 @@ ETBDspaceSYM = function(initialtree,
       }
     }
 
-    if (DIST = "NO") {
+    if (DIST == "NO") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
         xx <- MakeNOSAD(matrix_list5, JmaxV)
         matrix_list5 <- xx
