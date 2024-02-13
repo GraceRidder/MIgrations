@@ -4,16 +4,6 @@
 # On R-Studio, use:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-
-myFun <- function(n = 100000) {
-  a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
-  paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
-}
-
-abc <-myFun(3000000)
-
-abcd <- abc
-
 # Sourcing functions ----
 #  source("FC_namesSpecies.R")
 # source("FC_grow_tree.R")
@@ -61,7 +51,7 @@ ETBDspaceSYM = function(initialtree,
   trees = list()
 
 
-  ##run these to run a time step individually for sim testing
+  ##run these to run a time step individually for simulation testing
   # ipa = 1
   # psymp = .2
   # pallo = .0
@@ -83,12 +73,23 @@ ETBDspaceSYM = function(initialtree,
   # ExpSpParm = 2
   # ExpSp = T
 
+
+  ### A few small functions for the main function
+
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
 
+
+  myFun <- function(n = 100000) {
+    a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
+    paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
+  }
+
+  abc <-myFun(3000000)
+  abcd <- abc
+
   #initial tree with 100 dist
   {
-
 
     #initial species sizes
     if (siteN != 1){
@@ -109,7 +110,7 @@ ETBDspaceSYM = function(initialtree,
         matrix_list[[s]] = q
       }
 
-
+      ### for testing
       test1 <- list()
       for (s in 1:length(siteN)) {
         q <- matrix(
@@ -207,6 +208,11 @@ ETBDspaceSYM = function(initialtree,
 
   print("new version 60")
 
+
+
+  ### The start of the simulation
+  ### ipa is the time step
+
   for (ipa in 1:t)
 
   {
@@ -216,6 +222,7 @@ ETBDspaceSYM = function(initialtree,
 
     ##deleting extinct species from matrix list 6 from previous step
     matrix_list1 <- DeleteExtinct(matrix_list0)
+
     #statment about site extinction
     for (thing in 1:length(matrix_list1)) {
       if (sum(matrix_list1[[thing]]) == 0) {
@@ -383,7 +390,7 @@ ETBDspaceSYM = function(initialtree,
       }
 
 
-      #10% of parent population abundance
+      #symmetry of parent population abundance described by splitparm
       flop <- as.matrix(as.numeric(fax) * splitparm)
 
 
@@ -476,14 +483,15 @@ ETBDspaceSYM = function(initialtree,
     if (watchgrow) {
       plot(tree, cex = .5)
     }
-    ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
+
+    ### RANKS ABUNDANCES AND DRAWS FROM SAD
+
     if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
         xx <- MakeSAD(matrix_list5, SADmarg, JmaxV)
         matrix_list5 <- xx
       }
     }
-
 
     if (DIST == "GEO") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -548,7 +556,7 @@ ETBDspaceSYM = function(initialtree,
         }
       }
 
-      ##turning probabilities greater than 1 to 1
+      ##turning probabilities greater than 1 to 1 if they appear for some reason
       for (o in 1:length(matrix_list5)) {
         if (!is.null(etip[[o]])) {
           for (i in 1:length(etip[[o]])) {
@@ -576,8 +584,6 @@ ETBDspaceSYM = function(initialtree,
       }
 
 
-
-
       #name and position of extinct
       extinct = list()
       for (o in 1:length(siteN)) {
@@ -588,7 +594,6 @@ ETBDspaceSYM = function(initialtree,
           }
         }
       }
-
 
 
 
@@ -604,8 +609,6 @@ ETBDspaceSYM = function(initialtree,
       matrix_list6 <- matrix_list5
 
 
-
-
       for (o in 1:length(extinctx)) {
         if (length(extinctx) > 0) {
           if (length(extinctx[[o]]) > 0) {
@@ -619,8 +622,8 @@ ETBDspaceSYM = function(initialtree,
       extincttotal = c(extincttotal, ext)
 
 
-      for (o in 1:length(matrix_list6)){
-        if (NA %in% matrix_list6[[o]] ){
+      for (o in 1:length(matrix_list6)) {
+        if (NA %in% matrix_list6[[o]]) {
           matrix_list6[[o]] = 0
         }
       }
@@ -629,20 +632,20 @@ ETBDspaceSYM = function(initialtree,
       summat <- sum(unlist(matrix_list6))
 
 
-      if (sum(summat) == 0){
+      if (sum(summat) == 0) {
         message('EVERYTHING IS DEAD')
         break
       }
 
 
       ## counting ten time steps
-      is.wholenumber <- function(x, tol = .Machine$double.eps^0.5)  abs(x - round(x)) < tol
-      B <- ipa/100
-      if (is.wholenumber(B)){
+      is.wholenumber <-
+        function(x, tol = .Machine$double.eps ^ 0.5)
+          abs(x - round(x)) < tol
+      B <- ipa / 100
+      if (is.wholenumber(B)) {
         print(paste('relax everything is okay ...', ipa))
       }
-
-
 
     }
 
