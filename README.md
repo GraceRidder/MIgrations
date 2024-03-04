@@ -79,8 +79,7 @@ The parameters governing a given simulation are specified here. These parameters
 
 
 
-
-##simulation output 
+## Simulation output 
 
 
 The output files produced are listed below.
