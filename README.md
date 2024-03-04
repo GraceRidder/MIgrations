@@ -96,10 +96,6 @@ The output files produced are listed below.
   </tr>
   <tr>
     <td></td>
-    <td>trees:   collection of every tree for time step</td>
-  </tr>
-  <tr>
-    <td></td>
     <td>matrix_list:   final matrix of species locations and abundanecs</td>
   </tr>
   <tr>
@@ -107,27 +103,4 @@ The output files produced are listed below.
     <td>mig:   collection of matrix lists for every time step</td>  
   </tr>
   <tr>
-    <td></td>
-    <td>extincts:   list of all species that have gone extinct.</td>  
-  </tr>
-  <tr>
-    <td></td>
-    <td>allop:   matrix list of all species that allopatrically speciated</td>  
-  </tr>
-  <tr>
-    <td></td>
-    <td>symp:   matrix list of all species that have sympatrically speciated </td>  
-  </tr>
-  <tr>
-    <td></td>
-    <td>allotrip:   list of every allopatrically speciating species per time step</td>  
-  </tr>
-  <tr>
-    <td></td>
-    <td>symptrip:   list of every sympatrically speciating species per time step</td>  
-  </tr>
-  <tr>
-    <td></td>
-    <td>exsp:    matrix lists of extinct species per site </td>
-  </tr>
 </table>
