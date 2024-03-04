@@ -16,29 +16,13 @@ The parameters governing a given simulation are specified here. These parameters
     <td>number of time steps</td>
   </tr>
   <tr>
-    <td>pallo</td>
-    <td>probability of allopatric spectiaion, only works if 'probleave' is more than 0</td>
-  </tr>
-  <tr>
     <td>psymp</td>
-    <td>probability of sympatric specation</td>
+    <td>probability of constant specation</td>
   </tr>
   <tr>
-    <td>SRS</td>
-    <td>if TRUE indicates a fishers log-series species abundnace distribution</td>
+    <td>DIST</td>
+    <td> Set a species abundnace distribution  log normal: "NORM" fishers log series: "SRS" geometric: "GEO none:"NO" </td>
   </tr>
-  <tr>
-    <td>GEO</td>
-    <td>if TRUE indicates a geometric species abundnace distribution</td>
-  </tr>
-  <tr>
-    <td>LOGNRM</td>
-    <td>if TRUE will indicate a log-normal species abundnace distribution</td>
-  </tr>
-  <tr>
-    <td>NO</td>
-    <td>if TRUE indicates a constant species abundnace distribution</td>
-  </tr> 
   <tr>
     <td>watchgrow</td>
     <td>if TRUE allows animation of tree growth</td>
@@ -52,10 +36,6 @@ The parameters governing a given simulation are specified here. These parameters
     <td>number of sites (needs to be the same number os the length of JmaxV) or a square if isGrid is TRUE)</td>
   </tr>
   <tr>
-    <td>probleave</td>
-    <td>probability that a species will move to an adjacent site</td>
-  </tr>
-  <tr>
     <td>JmaxV</td>
     <td>vector of productivity zones (Jmax gradient) must be same length as numbe of sites</td>
   </tr>
@@ -67,6 +47,10 @@ The parameters governing a given simulation are specified here. These parameters
     <td>exparm</td>
     <td>if NegExpEx is TRUE this is the negative exponential parameter for extinciton</td>
   </tr>
+     <tr>
+    <td>constantEX</td>
+    <td>probability of extinction</td>
+  </tr>
   <tr>
     <td>ExpSpParm</td>
     <td>if ExpSp is TRUE this is the exponential parameter for speciation</td>
@@ -76,7 +60,7 @@ The parameters governing a given simulation are specified here. These parameters
     <td>if ExpSp is TRUE speciation is modeled as bounded exponential function</td>
   </tr>
   <tr>
-   <td>splitmarg</td>
+   <td>splitparm</td>
     <td>the proportion of the population of the mother species that will split/or bud and be inheritated by the daughter species (controls the strength of heritability of population size)</td>
   </tr> 
   <tr>
@@ -86,9 +70,6 @@ The parameters governing a given simulation are specified here. These parameters
   <tr>
      <td>bud</td>
     <td>if TRUE a small portion (depending on splitmarg) of the parent species will emerge leaving the origianl population of the parent species the same</td>
-  </tr>
-    <td>isGrid</td>
-    <td>if TRUE the space configuration turns from linear to a grid conected with chebyshev distance</td>
   </tr>
 </table>
 
