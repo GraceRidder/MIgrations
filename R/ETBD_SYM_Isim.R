@@ -34,8 +34,9 @@ ETBD_migrateSYM = function(initialtree,
                      ExpSpParm = 2,
                      ExpSp = T,
                      SPgrow = .25,
-                     splitparm = .25,
-                     constantEX = .1
+                     splitparm = .5,
+                     constantEX = .1,
+                     migprob = .4
                       )
 
 
@@ -52,24 +53,27 @@ ETBD_migrateSYM = function(initialtree,
 
 
   ##run these to run a time step individually for sim testing
-  ipa = 1
-  psymp = .2
-  pallo = .0
-  split = T
-  bud = F
-  allopatric = F
-  siteN = 3
-  probleave = .0
-  DIST = "SRS"
-  watchgrow = T
-  isGrid = F
-  mig_percent = .3
-  SADmarg = .1
-  JmaxV = c(1000, 1000, 1000)
-  NegExpEx = T
-  exparm = -0.9
-  ExpSpParm = 2
-  ExpSp = T
+  # ipa = 1
+  # psymp = .2
+  # pallo = .0
+  # split = T
+  # bud = F
+  # allopatric = F
+  # siteN = 3
+  # probleave = .0
+  # DIST = "SRS"
+  # watchgrow = T
+  # isGrid = F
+  # mig_percent = .3
+  # SADmarg = .1
+  # JmaxV = c(1000, 1000, 1000)
+  # NegExpEx = T
+  # exparm = -0.9
+  # ExpSpParm = 2
+  # ExpSp = T
+  # SPgrow = .25
+  # splitparm  = .5
+  # migprob = .4
 
   #### A few small function needed for the main function
   '%!in%' <- function(x,y)!('%in%'(x,y))
@@ -80,9 +84,9 @@ ETBD_migrateSYM = function(initialtree,
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(3000000)
+  abcd <-myFun(100000)
 
-
+print("abc done")
 
   {
 
@@ -131,7 +135,6 @@ ETBD_migrateSYM = function(initialtree,
         matrix_list0[[o]] <- matrix_list0[[o]] + initialsize - 1
       }
 
-
       temptree <- ITtree
       matrix_list6 <- matrix_list0
       blank1 <- matrix(nrow = 0, ncol = 1)
@@ -144,7 +147,7 @@ ETBD_migrateSYM = function(initialtree,
   }
 
 
-
+print("first matrix done")
   ########### initialization for ONE site ##########
   if (length(siteN) == 1){
     initialsize = 100
@@ -195,8 +198,6 @@ ETBD_migrateSYM = function(initialtree,
     }
   }
 
-  matrix_list0
-
 
 
   tree <- ape::makeNodeLabel(tree, method ="number")
@@ -205,23 +206,10 @@ ETBD_migrateSYM = function(initialtree,
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
   for (ipa in 1:t)
 
   {
+
 
     #start
     matrix_list0 <- matrix_list6
@@ -230,7 +218,22 @@ ETBD_migrateSYM = function(initialtree,
     matrix_list1 <- DeleteExtinct(matrix_list0)
 
 
-    ##growing species by SPgrow
+
+    ##### selecting species to migrate ######
+
+
+
+
+
+
+
+
+
+
+
+
+
+    #### growing species by SPgrow ####
 
     if (ExpSp){
       mat <- list()
@@ -239,6 +242,7 @@ ETBD_migrateSYM = function(initialtree,
       }
       matrix_list1 <-  mat
     }
+
 
     if (ExpSp) {
 
@@ -287,6 +291,7 @@ ETBD_migrateSYM = function(initialtree,
         }
       }
 
+
       for (o in 1:length(siteN)) {
         if (NA %in% (speciating[[o]])) {
           speciating[[o]] <- character(0)
@@ -313,11 +318,11 @@ ETBD_migrateSYM = function(initialtree,
 
 
     ###add the symp species onto the allotree
-    full<-
-      grow.treeX(symp_sp, allotree, abcd)
+    full<- grow.treeX(symp_sp, allotree, abcd)
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
+
 
 
     #
@@ -348,7 +353,8 @@ ETBD_migrateSYM = function(initialtree,
       }
 
 
-      ##for budding speciation one branch has same abundance and new branch has 10% of origianl
+
+      ##for budding speciation one branch has same abundance and new branch has 10% of original
       if (bud) {
         i  <- 1
         fax <- list()
@@ -364,6 +370,7 @@ ETBD_migrateSYM = function(initialtree,
           }
         }
       }
+
 
       ##for splitting speciation 10% is subtracted from original and new branch is 10% of original
       if (split) {
@@ -386,6 +393,7 @@ ETBD_migrateSYM = function(initialtree,
         }
       }
 
+      matrix_list4
 
       #10% of parent population abundance
       flop <- as.matrix(as.numeric(fax) * splitparm)
@@ -439,6 +447,11 @@ ETBD_migrateSYM = function(initialtree,
     } else {
       matrix_list5 <- matrix_list4
     }
+
+
+
+
+    matrix_list5
 
 
 
@@ -535,7 +548,6 @@ ETBD_migrateSYM = function(initialtree,
           }
         }
       }
-
 
       #calculate extinction probability
       etip = list()
@@ -671,6 +683,29 @@ ETBD_migrateSYM = function(initialtree,
 
 }
 }
+
+
+
+####### Extra testing #######
+
+res1 = ETBD_migrateSYM(
+  t = 40,
+  DIST = "NORM",     ### NO, GEO, SRS, NORM
+  watchgrow = T,
+  SADmarg = .1,
+  siteN = 2,
+  JmaxV = c(800, 4000),
+  NegExpEx = T,   ###dependent extinction
+  exparm = -.7,
+  psymp = 0,
+  ExpSp = T,      ###dependent speciation
+  ExpSpParm = 2,
+  constantEX = .001,
+  SPgrow = 0,
+  splitparm = .5, ### splitting
+  bud = F,
+  split = T
+)
 
 
 
