@@ -13,7 +13,7 @@
 # source("FC_DeleteExtinct.R")
 # source("FC_DeleteDups.R")
 # install.packages("ETBDsim")
-# library(ETBDsim)
+ library(ETBDsim)
 
 
 
@@ -84,7 +84,7 @@ ETBD_migrateSYM = function(initialtree,
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(100000)
+  abcd <-myFun(200000)
 
 print("abc done")
 
@@ -214,22 +214,41 @@ print("first matrix done")
     #start
     matrix_list0 <- matrix_list6
 
+
+
     ##deleting extinct species from matrix list 6 from previous step
-    matrix_list1 <- DeleteExtinct(matrix_list0)
+
+   matrix_list05 <- DeleteExtinct(matrix_list0)
+
+
+    for( o in 1:length(matrix_list05)){
+      matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
+      attributes(matrix_list05[[o]])$na.action <- NULL
+    }
 
 
 
     ##### selecting species to migrate ######
 
+    if (length(siteN) > 1) {
+      dist <- makeLineDomain(length(siteN), migprob)
+
+      migratedata <- Migrate(matrix_list05, dist, 1, siteN)
+
+      matrix_list1 <- migratedata$matrixlist
+    } else {
+      matrix_list1 <- matrix_list05
+    }
 
 
 
+   matrix_list05 <- DeleteExtinct(matrix_list1)
 
 
-
-
-
-
+   for( o in 1:length(matrix_list05)){
+     matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
+     attributes(matrix_list05[[o]])$na.action <- NULL
+   }
 
 
 
@@ -283,7 +302,7 @@ print("first matrix done")
       speciating = list()
       for (o in 1:length(siteN)) {
         i = 1
-        if (matrix_list1[[o]][i] != 0){
+        if (length(matrix_list1[[o]]) != 0){
           spe = setdiff(rownames(matrix_list1[[o]])[speciatinglog[[o]]], extincttotal)
           speciating[[o]] = spe
         } else {
@@ -393,7 +412,7 @@ print("first matrix done")
         }
       }
 
-      matrix_list4
+
 
       #10% of parent population abundance
       flop <- as.matrix(as.numeric(fax) * splitparm)
@@ -450,11 +469,6 @@ print("first matrix done")
 
 
 
-
-    matrix_list5
-
-
-
     if (NA %in% unlist(matrix_list5)) {
       message(
         "NA in matrixlist5: problem with adding sympatric species to matrix list",
@@ -478,6 +492,7 @@ print("first matrix done")
     ma <- test1
     ma[[1]] <- unique(sop3)
 
+
     #Updating survivors in tree
     tree <- full.tree
     if (length(sop3 > 1)) {
@@ -493,6 +508,7 @@ print("first matrix done")
     if (watchgrow) {
       plot(tree, cex = .5)
     }
+
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -541,13 +557,13 @@ print("first matrix done")
     ####### extinction #########
     {
 
-      for (o in 1:length(matrix_list5)){
-        for (k in 1:length(matrix_list5[[o]])){
-          if (matrix_list5[[o]][k] == 0){
-            matrix_list5[[o]][k] <- NA
-          }
-        }
-      }
+      # for (o in 1:length(matrix_list5)){
+      #   for (k in 1:length(matrix_list5[[o]])){
+      #     if (matrix_list5[[o]][k] == 0){
+      #       matrix_list5[[o]][k] <- NA
+      #     }
+      #   }
+      # }
 
       #calculate extinction probability
       etip = list()
@@ -564,18 +580,20 @@ print("first matrix done")
         }
       }
 
-      ##turning probabilities greater than 1 to 1
-      for (o in 1:length(matrix_list5)) {
-        if (!is.null(etip[[o]])) {
-          for (i in 1:length(etip[[o]])) {
-            if (!is.na(etip[[o]][i])) {
-              if (etip[[o]][i] > 1) {
-                etip[[o]][i] <- 1
-              }
-            }
-          }
-        }
-      }
+
+
+      # ##turning probabilities greater than 1 to 1
+      # for (o in 1:length(matrix_list5)) {
+      #   if (!is.null(etip[[o]])) {
+      #     for (i in 1:length(etip[[o]])) {
+      #       if (!is.na(etip[[o]][i])) {
+      #         if (etip[[o]][i] > 1) {
+      #           etip[[o]][i] <- 1
+      #         }
+      #       }
+      #     }
+      #   }
+      # }
 
       #as logical...
       etipp = list()
@@ -597,7 +615,7 @@ print("first matrix done")
       #name and position of extinct
       extinct = list()
       for (o in 1:length(siteN)) {
-        if (!is.na(etip[[o]][1])) {
+        if (!is.null(etip[[o]][1])) {
           if (length(matrix_list5[[o]] > 0)) {
             ex <- row.names(matrix_list5[[o]])[etipp[[o]]]
             extinct[[o]] <- as.matrix(ex)
@@ -635,14 +653,17 @@ print("first matrix done")
       extincttotal = c(extincttotal, ext)
 
 
-      for (o in 1:length(matrix_list6)){
-        if (NA %in% matrix_list6[[o]] ){
-          matrix_list6[[o]] = 0
-        }
-      }
+      # for (o in 1:length(matrix_list6)){
+      #   if (NA %in% matrix_list6[[o]] ){
+      #     matrix_list6[[o]] = c()
+      #   }
+      # }
 
 
-      summat <- sum(unlist(matrix_list6))
+
+
+
+      summat <- sum(na.omit(unlist(matrix_list6)))
 
 
       if (sum(summat) == 0){
@@ -662,6 +683,9 @@ print("first matrix done")
 
     }
 
+    matrix_list1
+    symp_sp
+    migratedata
     #monitors of sizes and trees
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
@@ -684,29 +708,31 @@ print("first matrix done")
 }
 }
 
-
-
 ####### Extra testing #######
 
 res1 = ETBD_migrateSYM(
-  t = 40,
+  t = 80,
   DIST = "NORM",     ### NO, GEO, SRS, NORM
-  watchgrow = T,
+  watchgrow = F,
   SADmarg = .1,
   siteN = 2,
-  JmaxV = c(800, 4000),
-  NegExpEx = T,   ###dependent extinction
+  JmaxV = c(2000, 800),
+  NegExpEx = F,   ###dependent extinction
   exparm = -.7,
-  psymp = 0,
+  psymp = .4,
   ExpSp = T,      ###dependent speciation
   ExpSpParm = 2,
-  constantEX = .001,
+  constantEX = .005,
   SPgrow = 0,
   splitparm = .5, ### splitting
-  bud = F,
-  split = T
+  bud = T,
+  split = F,
+  migprob = .5
 )
 
+
+plot(res1$tree, cex = .01)
+res1$matrix_list
 
 
 

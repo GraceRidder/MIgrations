@@ -1,3 +1,4 @@
+
 #SAD generators
 library(sads)
 
@@ -89,8 +90,10 @@ happyls_sads=function(S,
 
 newabund <- matlist
 for (i in 1:length(matlist)) {
+  if (J[i] != 0){
   newabund[[i]] = happyls_sads(S[i], J[i], alpha[i], reltol)
   newabund[[i]] <- sort(newabund[[i]], decreasing = T)
+  }
 }
 
 #attribute new sizes
@@ -98,9 +101,13 @@ for (i in 1:length(matlist)) {
 rankab <- matlist
 speciesrank <- matlist
 for (i in 1:length(matlist)){
+if (J[i] != 0){
   speciesrank[[i]] =rank(-matlist[[i]], ties.method = "random")
   rankab[[i]]<- newabund[[i]][speciesrank[[i]]]
 }
+}
+
+
 
 mat <- matlist
 for (i in 1:length(matlist)){

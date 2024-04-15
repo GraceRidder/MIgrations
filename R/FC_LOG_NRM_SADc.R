@@ -63,11 +63,10 @@ if (sum(newabund) < J){
 
   newabund<- newb
 
+
   for (i in 1:length(matlist)) {
     newabund[[i]] <- sort(newabund[[i]], decreasing = T)
   }
-
-
 
 
 #attribute new sizes
@@ -94,4 +93,5 @@ for (i in 1:length(matlist)){
 return(mat)
 
 }
+
 
