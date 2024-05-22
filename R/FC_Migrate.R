@@ -30,6 +30,7 @@
     }
   }
 
+
   #organizing some information for later
   new_site <- unlist(mote)
   mig_size <- unlist(matrix_list1)
@@ -68,23 +69,23 @@
     }
 
 
-    #### deleting the old species
-    mex <- matrixlist
-    for (o in 1:length(oldween)) {
-      if (length(oldween) > 0) {
-        if (length(oldween[[o]]) > 0) {
-          #prune the extinct from table
-          m = match(oldween[[o]], row.names(matrixlist[[o]]))
-          mex[[o]][m, 1] = 0
-        }
-      }
-    }
-
+    # #### deleting the old species
+    # mex <- matrixlist
+    # for (o in 1:length(oldween)) {
+    #   if (length(oldween) > 0) {
+    #     if (length(oldween[[o]]) > 0) {
+    #       #prune the extinct from table
+    #       m = match(oldween[[o]], row.names(matrixlist[[o]]))
+    #       mex[[o]][m, 1] = 0
+    #     }
+    #   }
+    # }
 
     # put them together
     for (o in 1:length(between)){
       rownames(letween[[o]]) <- between[[o]][,1]
     }
+
 
     #Make size a fraction of the initial population with mig_percent
     for ( o in 1:length(siteN)){
@@ -95,12 +96,14 @@
       }
     }
 
+   mex <-  matrixlist
     ##bind new population to original matrix
     morp <- list()
     for (o in 1:length(siteN)){
       mart <- rbind(mex[[o]], letween[[o]])
       morp[[o]]<-mart
     }
+
 
     more <- DeleteExtinct(morp)
 
@@ -143,6 +146,8 @@
 
   } else {
     more <- matrix_list1
+    between <- c()
+    oldween <- c()
   }
   if (NA %in% unlist(more)) {
     warning(paste("Problem with migration"))
@@ -150,7 +155,8 @@
 
   results = list(matrixlist = more,
                  data = hgloc,
-                 allo = between)
+                 allo = between,
+                 old = oldween)
     return(results)
   }
 

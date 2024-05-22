@@ -20,9 +20,9 @@
 ETBD_migrateSYM = function(initialtree,
                      t = 10,
                      Jmax = 1000,
-                     JmaxV = c(1000, 4000),
-                     split = T,
-                     bud = F,
+                     JmaxV = c(1000, 1000),
+                     split = F,
+                     bud = T,
                      siteN = 2,
                      DIST = "NORM",
                      psymp = .10,
@@ -50,30 +50,32 @@ ETBD_migrateSYM = function(initialtree,
   symptrip = list()
   exsp = list()
   trees = list()
+  migrates = list()
 
 
   ##run these to run a time step individually for sim testing
   # ipa = 1
-  # psymp = .2
+  # psymp = .15
   # pallo = .0
-  # split = T
-  # bud = F
+  # split = F
+  # bud = T
   # allopatric = F
-  # siteN = 3
+  # siteN = 2
   # probleave = .0
   # DIST = "SRS"
   # watchgrow = T
   # isGrid = F
   # mig_percent = .3
   # SADmarg = .1
-  # JmaxV = c(1000, 1000, 1000)
+  # JmaxV = c(1000, 1000)
   # NegExpEx = T
-  # exparm = -0.9
+  # exparm = -0.7
   # ExpSpParm = 2
-  # ExpSp = T
-  # SPgrow = .25
-  # splitparm  = .5
+  # ExpSp = F
+  # SPgrow = 0
+  # splitparm  = .3
   # migprob = .4
+  # constantEX = 0
 
   #### A few small function needed for the main function
   '%!in%' <- function(x,y)!('%in%'(x,y))
@@ -148,6 +150,7 @@ print("abc done")
 
 
 print("first matrix done")
+
   ########### initialization for ONE site ##########
   if (length(siteN) == 1){
     initialsize = 100
@@ -202,9 +205,7 @@ print("first matrix done")
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version 0")
-
-
+  print("new version starscream")
 
   for (ipa in 1:t)
 
@@ -215,10 +216,11 @@ print("first matrix done")
     matrix_list0 <- matrix_list6
 
 
-
+    matrix_list0
     ##deleting extinct species from matrix list 6 from previous step
 
    matrix_list05 <- DeleteExtinct(matrix_list0)
+   matrix_list55 <- DeleteExtinct(matrix_list0)
 
 
     for( o in 1:length(matrix_list05)){
@@ -227,22 +229,24 @@ print("first matrix done")
     }
 
 
-
     ##### selecting species to migrate ######
 
     if (length(siteN) > 1) {
       dist <- makeLineDomain(length(siteN), migprob)
 
+
       migratedata <- Migrate(matrix_list05, dist, 1, siteN)
 
       matrix_list1 <- migratedata$matrixlist
+
     } else {
       matrix_list1 <- matrix_list05
     }
 
 
-
    matrix_list05 <- DeleteExtinct(matrix_list1)
+
+
 
 
    for( o in 1:length(matrix_list05)){
@@ -250,6 +254,27 @@ print("first matrix done")
      attributes(matrix_list05[[o]])$na.action <- NULL
    }
 
+
+
+   matrix_list1 <- matrix_list05
+   temptree <- tree
+
+   ##adding species from allopatric speciaiton
+
+   full<- grow.treeX(migratedata$allo, temptree, abcd)
+   allo.tree <- full$tree
+   Atrip2 <- full$trip2
+   abcd <- full$abcd
+
+
+###adding allopatrically speciatig secies to matrix list
+
+   matrix_list13 <- AlloSpec(matrix_list55, migratedata$allo, migratedata$old, Atrip2, .8, siteN)
+
+   matrix_list13
+
+
+   ##
 
 
     #### growing species by SPgrow ####
@@ -263,13 +288,15 @@ print("first matrix done")
     }
 
 
+   # Sympatric Speciation
+
     if (ExpSp) {
 
     stip = list()
     for (o in 1:length(matrix_list1)) {
       if (NA %!in% matrix_list1[[o]]) {
          # speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
-          speciationp = ((matrix_list1[[o]][, 1])/sum(matrix_list1[[o]]))^ExpSpParm
+          speciationp = ((matrix_list1[[o]][, 1])/sum(unlist(matrix_list1)))^ExpSpParm
         stip[[o]] <- speciationp
       }
     }
@@ -296,9 +323,6 @@ print("first matrix done")
       }
 }
 
-
-
-
       speciating = list()
       for (o in 1:length(siteN)) {
         i = 1
@@ -309,7 +333,6 @@ print("first matrix done")
           speciating[[o]] = NA
         }
       }
-
 
       for (o in 1:length(siteN)) {
         if (NA %in% (speciating[[o]])) {
@@ -327,31 +350,38 @@ print("first matrix done")
 
 
 
+
     symp_sp <- DeleteDups(symp_sp)
+
+mag <- unlist(migratedata$allo)
+    ##make migrated species unable to speciaiton sympatrically
+    for (o in 1:length(symp_sp)) {
+      for (l in 1:length(symp_sp[[o]])) {
+        if (length(symp_sp[[o]][l]) > 0) {
+          if (symp_sp[[o]][l] %in% mag) {
+            symp_sp[[o]][l] <- NA
+          }
+        }
+      }
+    }
+
+    for( o in 1:length(symp_sp)){
+      symp_sp[[o]] <- (na.exclude(symp_sp[[o]]))
+      attributes(symp_sp[[o]])$na.action <- NULL
+    }
+
 
 
     temptree <- tree
     allotree <- tree
-
-    matrix_list4 <- matrix_list1
+    matrix_list4 <- matrix_list13
 
 
     ###add the symp species onto the allotree
-    full<- grow.treeX(symp_sp, allotree, abcd)
+    full<- grow.treeX(symp_sp, allo.tree, abcd)
     full.tree <- full$tree
     trip2 <- full$trip2
     abcd <- full$abcd
-
-
-
-    #
-    # full.trip <-
-    #   grow.tree(symp_sp, matrix_list1, allotree, temptree)$trip2
-    #
-    # ###finding names for sympatrically speciating species
-    # trip2 <- NULL
-    # trip2 <- new.sp.names(symp_sp, matrix_list1, temptree)
-    # trip2 <- grow.tree(symp_sp, matrix_list1, allotree, temptree)$trip2
 
 
     #temp hold all unique species
@@ -371,8 +401,6 @@ print("first matrix done")
         g <- g + 1
       }
 
-
-
       ##for budding speciation one branch has same abundance and new branch has 10% of original
       if (bud) {
         i  <- 1
@@ -389,7 +417,6 @@ print("first matrix done")
           }
         }
       }
-
 
       ##for splitting speciation 10% is subtracted from original and new branch is 10% of original
       if (split) {
@@ -412,15 +439,11 @@ print("first matrix done")
         }
       }
 
-
-
       #10% of parent population abundance
       flop <- as.matrix(as.numeric(fax) * splitparm)
 
-
       ### pop is new species sizes and the new names
       pop <- symp_sp
-
 
       i <- 1
       for (o in 1:length(symp_sp)) {
@@ -432,7 +455,6 @@ print("first matrix done")
         }
         pop[[o]] <- matrix(as.numeric(pop[[o]]))
       }
-
 
       i <- 1
       for (o in 1:length(symp_sp)) {
@@ -468,7 +490,6 @@ print("first matrix done")
     }
 
 
-
     if (NA %in% unlist(matrix_list5)) {
       message(
         "NA in matrixlist5: problem with adding sympatric species to matrix list",
@@ -480,10 +501,13 @@ print("first matrix done")
 
     ##list of speciating species
     specspec <- unlist(symp_sp)
+    specspec <- append(specspec, unlist(migratedata$allo))
 
     ##list of new species that have already grown in tree
     grownspec <- unlist(unique(symptrip))
+    grownspec <- append(grownspec, unlist(unique(Atrip2)))
     allspec <-  unmatrixlist(matrix_list5)
+    matrix_list5
 
     ##finding species that didn't speciate or grow or are extinct.
     sop = setdiff(allspec, specspec)
@@ -491,7 +515,6 @@ print("first matrix done")
     sop3 = setdiff(sop2, extincttotal)
     ma <- test1
     ma[[1]] <- unique(sop3)
-
 
     #Updating survivors in tree
     tree <- full.tree
@@ -610,8 +633,6 @@ print("first matrix done")
       }
 
 
-
-
       #name and position of extinct
       extinct = list()
       for (o in 1:length(siteN)) {
@@ -622,8 +643,6 @@ print("first matrix done")
           }
         }
       }
-
-
 
 
       extinctx <- extinct
@@ -679,20 +698,17 @@ print("first matrix done")
         print(paste('relax everything is okay ...', ipa))
       }
 
-
-
     }
 
-    matrix_list1
-    symp_sp
-    migratedata
+
     #monitors of sizes and trees
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
+    migrates[[ipa]] = migratedata$allo
    # trees[[ipa]] = tree
 
   }
-
+print(JmaxV)
   return(
     list(
       tree = tree,
@@ -700,7 +716,8 @@ print("first matrix done")
       #final tree
       #all trees by timeslice
       matrix_list = matrix_list6,
-      mig = mig
+      mig = mig,
+      migrates = migrates
 
     )
   )
@@ -708,31 +725,173 @@ print("first matrix done")
 }
 }
 
+
 ####### Extra testing #######
 
 res1 = ETBD_migrateSYM(
-  t = 80,
-  DIST = "NORM",     ### NO, GEO, SRS, NORM
+  t =6,
+  DIST = "SRS",     ### NO, GEO, SRS, NORM
   watchgrow = F,
   SADmarg = .1,
   siteN = 2,
-  JmaxV = c(2000, 800),
-  NegExpEx = F,   ###dependent extinction
-  exparm = -.7,
-  psymp = .4,
-  ExpSp = T,      ###dependent speciation
+  JmaxV = c(1000, 3000),
+  NegExpEx = T,   ###dependent extinction
+  exparm = -.8,
+  psymp = .2,
+  ExpSp = F,      ###dependent speciation
   ExpSpParm = 2,
-  constantEX = .005,
+  constantEX = 0,
   SPgrow = 0,
-  splitparm = .5, ### splitting
+  splitparm = .3, ### splitting
   bud = T,
   split = F,
-  migprob = .5
+  migprob = 0.1
 )
 
 
+
+
+
 plot(res1$tree, cex = .01)
-res1$matrix_list
+xtree <- drop.extinct(res1$tree)
+plot(xtree, cex = .01)
+troll <- try(timeSliceTree(res1$tree, 1, plot = F, drop.extinct = T))
+plot(troll, cex = .01)
+
+
+X1 <- c()
+X2 <- c()
+for (i in 1:length(res1$mig)){
+  X1 <- append(X1,length(res1$mig[i][[1]][[1]]))
+  X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
+}
+
+#plot(X1+X2, typ = "l")
+plot(X2, typ = "l", col = "red")
+#lines(X1, typ = "l", col = "red")
+lines(X1, typ = "l", col = "blue")
+
+
+x1 <- c()
+x2 <- c()
+for (i in 1:length(res1$mig)){
+  x1 <- append(x1,sum(res1$mig[i][[1]][[1]][,1]))
+  x2 <- append(x2,sum(res1$mig[i][[1]][[2]][,1]))
+}
+
+
+plot(x1, typ = "l", ylim = c(0,3550))
+lines(x1, typ = "l", col = "red")
+lines(x2, typ = "l", col = "blue")
+
+hist(res1$matrix_list[[1]], col = "red")
+hist(res1$matrix_list[[2]], col = "blue")
+
+
+####small helper funciton
+#'%!in%' <- function(x,y)!('%in%'(x,y))
+
+
+###NODE LABELS
+#### indexing the time steps they exist in
+
+##will error if the first site speciates on the first step
+sites <- c()
+for (j in 2:length(res1$tree$node.label)) {
+  t = 1
+  while (res1$tree$node.label[j] %!in% c(unlist(row.names(res1$mig[[t]][[1]])), unlist(row.names(res1$mig[[t]][[2]])))) {
+    t = t + 1
+  }
+  sites <- append(sites, t)
+}
+
+###NODE LABELS
+#### indexing the site they exist in
+R <- c(.5)
+for (i in 2:length(res1$tree$node.label)) {
+  tt <- sites[i-1]
+  if (res1$tree$node.label[i] %in% unlist(row.names(res1$mig[[tt]][[1]]))) {
+    R <- append(R, 0)
+  }
+  if (res1$tree$node.label[i] %in% unlist(row.names(res1$mig[[tt]][[2]]))) {
+    R <- append(R, 1)
+  }
+
+}
+
+
+###NODE LABELS
+#### indexing the time steps they exist in
+Tsites <- c()
+for (j in 1:length(res1$tree$tip.label)) {
+  t = 1
+  while (res1$tree$tip.label[j] %!in% c(unlist(row.names(res1$mig[[t]][[1]])), unlist(row.names(res1$mig[[t]][[2]])))) {
+    t = t + 1
+  }
+  Tsites <- append(Tsites, t)
+}
+
+###NODE LABELS
+#### indexing the site they exist in
+TR <- c()
+for (i in 1:length(res1$tree$tip.label)) {
+  tt <- Tsites[i]
+  if (res1$tree$tip.label[i] %in% unlist(row.names(res1$mig[[tt]][[1]]))) {
+    TR <- append(TR, 0)
+  }
+  if (res1$tree$tip.label[i] %in% unlist(row.names(res1$mig[[tt]][[2]]))) {
+    TR <- append(TR, 1)
+  }
+
+}
+
+
+
+####################### try to track in tree
+
+#library(phytools)
+#library(ggtree)
+#library(dplyr)
+
+x <- res1$tree
+d <- data.frame(label=x$tip.label, var1 = TR)
+tree <- full_join(x, d, by='label')
+
+var1 = R
+var2 = +(!R)
+var2[1] <- 0.5
+ancstats <- as.data.frame(var1)
+ancstats <- cbind(ancstats, var2)
+ancstats$node <- 1:res1$tree$Nnode+Ntip(res1$tree)
+
+nam <- res1$tree$tip.label
+xx <- TR
+names(xx) <- nam
+
+
+p12 <- ggtree(res1$tree)
+# add heatmap
+p12 <- gheatmap(p12, data.frame(factor(xx)), offset=0.02, width=0.02, colnames = F, font.size=2) +
+  scale_fill_manual(values=c("red","blue"))
+
+p12
+
+pies <- nodepie(ancstats, cols = 1:2)
+pies <- lapply(pies, function(g) g+scale_fill_manual(values=c("blue","red")))
+p2 <- p12 + geom_inset(pies, width = .05, height = .05)
+
+plot(p2, guides='collect', tag_levels='A')
+
+
+
+
+
+
+
+
+
+
+
 
 
 

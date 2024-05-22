@@ -88,6 +88,7 @@ happyls_sads=function(S,
 }
 
 
+
 newabund <- matlist
 for (i in 1:length(matlist)) {
   if (J[i] != 0){
