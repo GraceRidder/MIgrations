@@ -729,12 +729,12 @@ print(JmaxV)
 ####### Extra testing #######
 
 res1 = ETBD_migrateSYM(
-  t =6,
-  DIST = "SRS",     ### NO, GEO, SRS, NORM
+  t =20,
+  DIST = "NORM",     ### NO, GEO, SRS, NORM
   watchgrow = F,
   SADmarg = .1,
   siteN = 2,
-  JmaxV = c(1000, 3000),
+  JmaxV = c(1500, 1500),
   NegExpEx = T,   ###dependent extinction
   exparm = -.8,
   psymp = .2,
@@ -745,7 +745,7 @@ res1 = ETBD_migrateSYM(
   splitparm = .3, ### splitting
   bud = T,
   split = F,
-  migprob = 0.1
+  migprob = .1
 )
 
 
@@ -781,8 +781,8 @@ for (i in 1:length(res1$mig)){
 
 
 plot(x1, typ = "l", ylim = c(0,3550))
-lines(x1, typ = "l", col = "red")
-lines(x2, typ = "l", col = "blue")
+lines(x1, typ = "l", col = "blue")
+lines(x2, typ = "l", col = "red")
 
 hist(res1$matrix_list[[1]], col = "red")
 hist(res1$matrix_list[[2]], col = "blue")
@@ -851,7 +851,7 @@ for (i in 1:length(res1$tree$tip.label)) {
 
 #library(phytools)
 #library(ggtree)
-#library(dplyr)
+library(dplyr)
 
 x <- res1$tree
 d <- data.frame(label=x$tip.label, var1 = TR)
@@ -882,6 +882,7 @@ p2 <- p12 + geom_inset(pies, width = .05, height = .05)
 
 plot(p2, guides='collect', tag_levels='A')
 
+dev.off()
 
 
 
