@@ -170,14 +170,14 @@ library("ETBDsim")
 
 treelist <- list()
 miglist <- list()
-for (i in 1:100){
+for (i in 1:10){
   res1 = ETBD_migrateSYM(
-    t =50,
+    t =200,
     DIST = "SRS",     ### NO, GEO, SRS, NORM
     watchgrow = F,
     SADmarg = .1,
     siteN = 2,
-    JmaxV = c(4000, 3000),
+    JmaxV = c(2000, 1000),
     NegExpEx = T,   ###dependent extinction
     exparm = -2,
     psymp = .2,
@@ -225,7 +225,7 @@ for (i in 1:length(res1$mig)){
 }
 
 
-plot(x1, typ = "l", ylim = c(0,4550))
+plot(x1, typ = "l", ylim = c(0,1550))
 lines(x1, typ = "l", col = "red")
 lines(x2, typ = "l", col = "blue")
 
@@ -344,7 +344,7 @@ p12 <- gheatmap(p12, df, offset=.00, width=0.2, colnames = F, font.size=2) +
   #  scale_fill_manual(values=c("red","blue"))
   scale_fill_manual(values=c("0" = "red","1" = "blue", "2" = "pink","3" = "lightblue"))
 
-#plot(p12)
+plot(p12)
 
 
 
@@ -359,16 +359,11 @@ p12 <- gheatmap(p12, trimed, offset=.00, width=0.2, colnames = F, font.size=2) +
   scale_fill_manual(values=c("0" = "red","1" = "blue", "2" = "blue","3" = "red"))
 p12
 
-
-
-
-
 tropic <- c(trimed$factor.xx.=="0")
 tropic <- trimed[tropic,]
 sum(as.numeric(tropic$factor.trait.bi1.)-1)
 length(tropic[,1])
 sum(as.numeric(tropic$factor.trait.bi1.)-1)/length(tropic[,1])
-
 
 
 temp <- c(trimed$factor.xx.=="1")
@@ -378,5 +373,7 @@ sum(as.numeric(temper$factor.trait.bi1.)-1)/length(temper[,1])
 
 
 
+plot(density(tropic$LL), col = "red")
+lines(density(temper$LL), col = "blue")
 
 
