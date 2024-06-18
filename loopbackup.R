@@ -1,3 +1,9 @@
+load('~/Desktop/SRS_200test.RData')
+
+
+plot(drop.extinct(rs[[1]]$reslist[[1]]$tree))
+
+
 fulltrops <- c()
 fulltemps <- c()
 
@@ -172,12 +178,12 @@ treelist <- list()
 miglist <- list()
 for (i in 1:10){
   res1 = ETBD_migrateSYM(
-    t =200,
+    t =100,
     DIST = "SRS",     ### NO, GEO, SRS, NORM
     watchgrow = F,
     SADmarg = .1,
-    siteN = 2,
-    JmaxV = c(2000, 1000),
+    siteN = 1,
+    JmaxV = c(3000),
     NegExpEx = T,   ###dependent extinction
     exparm = -2,
     psymp = .2,
@@ -203,6 +209,51 @@ plot(res1$tree, show.tip.label = F)
 axis(1)
 xtree <- drop.extinct(res1$tree)
 plot(xtree, cex = .01)
+
+
+
+migs3000 <- miglist
+trees3000 <- treelist
+
+
+X1 <- c()
+X2 <- c()
+for (j in 1:length(miglist)){
+  mig <- miglist[[j]]
+  X1 <- c()
+for (i in 1:length(mig)){
+  X1 <- append(X1,length(res1$mig[i][[1]][[1]]))
+}
+  X2 <- cbind(X2,X1)
+}
+
+
+plot(rowMeans(X), typ = 'l', col = "blue")
+lines(rowMeans(X2), typ = 'l', col = "red")
+
+
+
+library(epm)
+
+LL <- c()
+for ( j in 1:length(trees2000)){
+  tree <- trees2000[[j]]
+  LL<- append(LL, DRstat(tree))
+}
+
+length(LL)
+
+
+
+LL2<- DRstat(res1$tree)
+
+plot(density(LL3))
+lines(density(LL2))
+
+
+
+
+
 
 
 X1 <- c()

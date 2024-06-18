@@ -206,7 +206,7 @@ ETBD_migrateSYM = function(initialtree,
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("version tardigrade")
+  print("version tardigrade1")
 
   for (ipa in 1:t)
 
@@ -242,37 +242,44 @@ ETBD_migrateSYM = function(initialtree,
 
     } else {
       matrix_list1 <- matrix_list05
+      migratedata <- c()
+
     }
 
 
     matrix_list05 <- DeleteExtinct(matrix_list1)
-
-
-
 
     for( o in 1:length(matrix_list05)){
       matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
       attributes(matrix_list05[[o]])$na.action <- NULL
     }
 
-
-
     matrix_list1 <- matrix_list05
     temptree <- tree
 
     ##adding species from allopatric speciaiton
 
-    full<- grow.treeX(migratedata$allo, temptree, abcd)
-    allo.tree <- full$tree
-    Atrip2 <- full$trip2
-    abcd <- full$abcd
+    if (length(migratedata)>0) {
+      full <- grow.treeX(migratedata$allo, temptree, abcd)
+      allo.tree <- full$tree
+      Atrip2 <- full$trip2
+      abcd <- full$abcd
+
+      ###adding allopatrically speciatig secies to matrix list
+
+      matrix_list13 <- AlloSpec(matrix_list55,
+                                migratedata$allo,
+                                migratedata$old,
+                                Atrip2,
+                                .8,
+                                siteN)
+    } else {
+      matrix_list13 <- matrix_list1
+      allo.tree <- temptree
+      Atrip2 <- c()
+    }
 
 
-    ###adding allopatrically speciatig secies to matrix list
-
-    matrix_list13 <- AlloSpec(matrix_list55, migratedata$allo, migratedata$old, Atrip2, .8, siteN)
-
-    matrix_list13
 
 
     ##
