@@ -1,9 +1,54 @@
+
+grow.newick <-function(speciesMatrix, pine, abcd) {
+
+  my <- pine
+  tree <- pine
+  tampa <- unlist(speciesMatrix)
+  temp <- unique(tampa)
+
+  ##counts how many speciating species exist across the site
+  trip2 <- list()
+
+  if (length(temp) > 0) {
+    for (f in 1:length(temp)) {
+
+      trip <- c()
+
+      for (e in 1:2) {
+        trip <- append(trip, abcd[[e]])
+        abcd <- abcd[-c(1:2)]
+      }
+
+      trip2[[f]] <- trip
+
+      x <- unlist(gregexpr(temp[f], tree))[1]
+      letter <- paste0('(',trip[1], ":1",',', trip[2],":1)")
+      tree <-paste0(substr(tree, 1,x-1), letter, substr(tree,x,nchar(tree)))
+
+    }
+  }
+
+  results = list(tree = tree, trip2 = trip2, abcd = abcd)
+
+  return(results)
+
+}
+
+
+survive.NE=function(tr, tip){
+  x <- unlist(gregexpr(tip, tr))
+  x = (x+ nchar(tip))
+  substr(tr, x+1, x+1) <- as.character(as.numeric(substr(tr, x+1,x+1))+1)
+  return(tr)
+}
+
+
+
 ##### tree function
 ######
 
 grow.treeX <-function(speciesMatrix, pine, abcd) {
 
- # pine <- ape::makeNodeLabel(allotree, method ="number")
 
   tree <- pine
   tampa <- unlist(speciesMatrix)

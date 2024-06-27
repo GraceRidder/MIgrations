@@ -1,7 +1,95 @@
-load('~/Desktop/SRS_200test.RData')
 
 
-plot(drop.extinct(rs[[1]]$reslist[[1]]$tree))
+
+
+load('~/Desktop/twosite/DRS_SRS_3000_10_2.RData')
+
+
+DR30002 <- DRs
+
+
+
+DRR3000_3 <- cbind(DR3000,DR30001, DR30002)
+
+dim(DRR3000_2)
+
+plot(rev(rowMeans(DRR3000_3)), typ = 'l', col = 'red')
+lines(rev(rowMeans(DRR2000_3)), col = 'blue')
+
+maxx2 <- c()
+for (i in 1:length(DRR3000_2[,1])){
+maxx2 <-append(maxx2, max(DRR3000_2[i,]))
+}
+
+minn2 <- c()
+for (i in 1:length(DRR3000_2[,1])){
+  minn2 <-append(minn2, min(DRR3000_2[i,]))
+}
+
+two <- rowMeans(DRR3000_2)
+
+library(ggplot2)
+
+df <-as.data.frame(cbind(c(1:39)), two)
+
+
+
+
+g <- ggplot(data=df, aes(x=c(1:39), y=three, ymin=rev(minn), ymax=rev(maxx))) +
+   geom_line() +
+   geom_ribbon(alpha=0.5) +
+  scale_x_log10() +
+  scale_y_log10()
+
+
+
+g2 <- ggplot(data=df, aes(x=c(1:39), y=rev(two), ymin=rev(minn2), ymax=rev(maxx2))) +
+  geom_line() +
+  geom_ribbon(alpha=0.5) +
+  scale_x_log10() +
+  scale_y_log10()
+g2
+g2 + geom_line(aes(y=f), colour="red")
+
+t <- rev(two)
+
+s <- c(NA, NA, NA)
+f <- append(s, t[1:36])
+
+
+x = c()
+D = 10
+for ( l in 1:39){
+  x <- append(x, D)
+  D = D+10
+}
+
+library(epm)
+library(geiger)
+library(paleotree)
+
+x = 1:3
+DRs <- c()
+
+for (o in 1:length(rs)) {
+  tree <- rs[[o]]$reslist[[1]]$tree
+  DRstats <- c()
+  for (i in 1:length(x)) {
+    troll <- timeSliceTree(tree, x[i], plot = F, drop.extinct = T)
+    LL <- DRstat(troll)
+    DRstats <- append(DRstats, mean(LL))
+  }
+
+  DRs <- cbind(DRs, DRstats)
+
+}
+
+
+
+
+
+
+
 
 
 fulltrops <- c()
@@ -150,7 +238,6 @@ for (b in 1:length(treelist)){
   sum_temp <- append(sum_temp, SUMEMP)
 
 
-
 }
 
 boxplot(per_trop, per_temp, names =c("tropics", "temperate"), main = "threshold > 0.2")
@@ -170,22 +257,23 @@ library(phytools)
 library(ggtree)
 library(dplyr)
 library(geiger)
+install.packages('ETBDsim')
 
 library("ETBDsim")
-
+library("profvis")
 
 treelist <- list()
 miglist <- list()
 for (i in 1:10){
-  res1 = ETBD_migrateSYM(
-    t =100,
+ profvis({res1 = ETBD_migrateSYM(
+    t =30,
     DIST = "SRS",     ### NO, GEO, SRS, NORM
     watchgrow = F,
     SADmarg = .1,
-    siteN = 1,
-    JmaxV = c(3000),
+    siteN = 2,
+    JmaxV = c(1500, 2500),
     NegExpEx = T,   ###dependent extinction
-    exparm = -2,
+    exparm = -.7,
     psymp = .2,
     ExpSp = F,      ###dependent speciation
     ExpSpParm = 2,
@@ -195,8 +283,9 @@ for (i in 1:10){
     bud = T,
     split = F,
     migprob = .0,
-    exparm2 = .5
-  )
+    exparm2 = -.3
+  )}
+)
 
 
   treelist[[i]] <- res1$tree
@@ -204,11 +293,62 @@ for (i in 1:10){
 }
 
 
+library(geiger)
+
+
+
 
 plot(res1$tree, show.tip.label = F)
 axis(1)
 xtree <- drop.extinct(res1$tree)
 plot(xtree, cex = .01)
+
+
+f <- c()
+for ( w in 1:length(treelist)){
+  tree <- treelist[[w]]
+g = c()
+b = c()
+x = 50:90
+for ( i in 1:length(x)){
+
+ troll <- try(timeSliceTree(tree, x[i], plot = F, drop.extinct = T))
+ g <- append(g, gammaStat(troll))
+ b <- append(b, beta_statistic(troll))
+
+}
+f <- cbind(f, g)
+}
+
+
+
+plot(rev(rowMeans(f)), typ = "l", col = "red", main = "gamma (10 reps")
+abline(h=0)
+
+plot(rev(b), typ = "l", col = "blue", main = "beta")
+
+
+
+gammaStat(drop.extinct(res1$tree))
+
+install.packages('treestats')
+library('treestats')
+
+beta_statistic(drop.extinct(res1$tree))
+
+
+
+x <- c()
+b <- c()
+for (i in 1:length(treelist)){
+  x <- append (x, (gammaStat(drop.extinct(treelist[[i]]))))
+  b <- append(b, beta_statistic(drop.extinct(treelist[[i]])))
+}
+
+ hist(x)
+hist(b)
+mean(x)
+mean(b)
 
 
 
@@ -263,10 +403,10 @@ for (i in 1:length(res1$mig)){
   X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
 }
 
-plot(X1+X2, typ = "l")
-lines(X2, typ = "l", col = "blue")
-#lines(X1, typ = "l", col = "red")
-lines(X1, typ = "l", col = "red")
+plot(X2, typ = "l", col = "red", ylim =c(0,300), main = "species richness")
+
+lines(X1, typ = "l", col = "blue")
+
 
 x1 <- c()
 x2 <- c()
@@ -275,17 +415,17 @@ for (i in 1:length(res1$mig)){
   x2 <- append(x2,sum(res1$mig[i][[1]][[2]][,1]))
 }
 
-
-plot(x1, typ = "l", ylim = c(0,1550))
-lines(x1, typ = "l", col = "red")
-lines(x2, typ = "l", col = "blue")
+dev.off()
+plot(x2, typ = "l", main = "abundances")
+lines(x1, typ = "l", col = "blue")
+lines(x2, typ = "l", col = "red")
 
 hist(res1$matrix_list[[1]], col = "red")
 hist(res1$matrix_list[[2]], col = "blue")
 
 
 ####small helper funciton
-#'%!in%' <- function(x,y)!('%in%'(x,y))
+'%!in%' <- function(x,y)!('%in%'(x,y))
 
 
 ###NODE LABELS
@@ -296,15 +436,13 @@ sites <- c()
 for (j in 2:length(res1$tree$node.label)) {
   t = 1
   while (res1$tree$node.label[j] %!in% c(unlist(row.names(res1$mig[[t]][[1]])), "t001", "t002",
-                                         unlist(row.names(res1$mig[[t]][[2]])))) {
+                                         unlist(row.names(res1$mig[[t]][[2]]))))
+                                       #  unlist(row.names(res1$mig[[t]][[3]]))))
+    {
     t = t + 1
   }
   sites <- append(sites, t)
 }
-
-
-
-
 
 
 
@@ -319,8 +457,12 @@ for (i in 2:length(res1$tree$node.label)) {
   if (res1$tree$node.label[i] %in% unlist(row.names(res1$mig[[tt]][[2]]))) {
     R <- append(R, 1)
   }
+ # if (res1$tree$node.label[i] %in% unlist(row.names(res1$mig[[tt]][[3]]))) {
+   # R <- append(R, 2)
+ # }
 
 }
+
 
 
 ###NODE LABELS
@@ -351,7 +493,7 @@ for (i in 1:length(res1$tree$tip.label)) {
 
 
 ####################### try to track in tree
-
+library(dplyr)
 
 x <- res1$tree
 d <- data.frame(label=x$tip.label, var1 = TR)
@@ -403,12 +545,16 @@ q <-match(xtree$tip.label,row.names(df))
 trimed <- df[q,]
 
 
+
 p12 <- ggtree(xtree)
 
 p12 <- gheatmap(p12, trimed, offset=.00, width=0.2, colnames = F, font.size=2) +
   #  scale_fill_manual(values=c("red","blue"))
   scale_fill_manual(values=c("0" = "red","1" = "blue", "2" = "blue","3" = "red"))
 p12
+
+
+
 
 tropic <- c(trimed$factor.xx.=="0")
 tropic <- trimed[tropic,]
@@ -426,5 +572,10 @@ sum(as.numeric(temper$factor.trait.bi1.)-1)/length(temper[,1])
 
 plot(density(tropic$LL), col = "red")
 lines(density(temper$LL), col = "blue")
+
+
+
+
+
 
 

@@ -12,32 +12,33 @@
 # source("FC_Migrate.R")
 # source("FC_DeleteExtinct.R")
 # source("FC_DeleteDups.R")
- install.packages("ETBDsim")
-# library(ETBDsim)
+# install.packages("ETBDsim")
+ #library(ETBDsim)
 
 
 
 ETBD_migrateSYM = function(initialtree,
-                     t = 10,
-                     Jmax = 1000,
-                     JmaxV = c(1000, 1000),
-                     split = F,
-                     bud = T,
-                     siteN = 2,
-                     DIST = "NORM",
-                     psymp = .10,
-                     watchgrow = F,
-                     SADmarg = .1,
-                     exparm = -0.7,
-                     NegExpEx = T,
-                     isGrid = F,
-                     ExpSpParm = 2,
-                     ExpSp = T,
-                     SPgrow = .25,
-                     splitparm = .5,
-                     constantEX = .1,
-                     migprob = .4
-                      )
+                           t = 10,
+                           Jmax = 1000,
+                           JmaxV = c(1000, 1000),
+                           split = F,
+                           bud = T,
+                           siteN = 2,
+                           DIST = "NORM",
+                           psymp = .10,
+                           watchgrow = F,
+                           SADmarg = .1,
+                           exparm = -0.7,
+                           NegExpEx = T,
+                           isGrid = F,
+                           ExpSpParm = 2,
+                           ExpSp = T,
+                           SPgrow = .25,
+                           splitparm = .5,
+                           constantEX = .1,
+                           migprob = .4,
+                           exparm2 = .5
+)
 
 
 {{
@@ -86,13 +87,13 @@ ETBD_migrateSYM = function(initialtree,
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(200000)
+  abcd <-myFun(100000)
 
-print("abc done")
+
 
   {
 
-########### initialization for multiple sites ##########
+    ########### initialization for multiple sites ##########
 
     #initial species sizes
     if (siteN != 1){
@@ -104,7 +105,7 @@ print("abc done")
       tree = ape::as.phylo(~ names)
       tree$edge.length = rep(1, length(siteN))
 
-     ### starting tree
+      ### starting tree
       ITtree <- tree
 
       ##starting species matrix
@@ -149,7 +150,7 @@ print("abc done")
   }
 
 
-print("first matrix done")
+
 
   ########### initialization for ONE site ##########
   if (length(siteN) == 1){
@@ -205,7 +206,7 @@ print("first matrix done")
 
   tree <- ape::makeNodeLabel(tree, method ="number")
 
-  print("new version starscream")
+  print("version tardigrade2")
 
   for (ipa in 1:t)
 
@@ -219,8 +220,8 @@ print("first matrix done")
     matrix_list0
     ##deleting extinct species from matrix list 6 from previous step
 
-   matrix_list05 <- DeleteExtinct(matrix_list0)
-   matrix_list55 <- DeleteExtinct(matrix_list0)
+    matrix_list05 <- DeleteExtinct(matrix_list0)
+    matrix_list55 <- DeleteExtinct(matrix_list0)
 
 
     for( o in 1:length(matrix_list05)){
@@ -241,40 +242,48 @@ print("first matrix done")
 
     } else {
       matrix_list1 <- matrix_list05
+      migratedata <- c()
+
     }
 
 
-   matrix_list05 <- DeleteExtinct(matrix_list1)
+    matrix_list05 <- DeleteExtinct(matrix_list1)
+
+    for( o in 1:length(matrix_list05)){
+      matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
+      attributes(matrix_list05[[o]])$na.action <- NULL
+    }
+
+    matrix_list1 <- matrix_list05
+    temptree <- tree
+
+    ##adding species from allopatric speciaiton
+
+
+    if (length(migratedata)>0) {
+      full <- grow.treeX(migratedata$allo, temptree, abcd)
+      allo.tree <- full$tree
+      Atrip2 <- full$trip2
+      abcd <- full$abcd
+
+      ###adding allopatrically speciatig secies to matrix list
+
+      matrix_list13 <- AlloSpec(matrix_list55,
+                                migratedata$allo,
+                                migratedata$old,
+                                Atrip2,
+                                .8,
+                                siteN)
+    } else {
+      matrix_list13 <- matrix_list1
+      allo.tree <- temptree
+      Atrip2 <- c()
+    }
 
 
 
 
-   for( o in 1:length(matrix_list05)){
-     matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
-     attributes(matrix_list05[[o]])$na.action <- NULL
-   }
-
-
-
-   matrix_list1 <- matrix_list05
-   temptree <- tree
-
-   ##adding species from allopatric speciaiton
-
-   full<- grow.treeX(migratedata$allo, temptree, abcd)
-   allo.tree <- full$tree
-   Atrip2 <- full$trip2
-   abcd <- full$abcd
-
-
-###adding allopatrically speciatig secies to matrix list
-
-   matrix_list13 <- AlloSpec(matrix_list55, migratedata$allo, migratedata$old, Atrip2, .8, siteN)
-
-   matrix_list13
-
-
-   ##
+    ##
 
 
     #### growing species by SPgrow ####
@@ -288,32 +297,32 @@ print("first matrix done")
     }
 
 
-   # Sympatric Speciation
+    # Sympatric Speciation
 
     if (ExpSp) {
 
-    stip = list()
-    for (o in 1:length(matrix_list1)) {
-      if (NA %!in% matrix_list1[[o]]) {
-         # speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
+      stip = list()
+      for (o in 1:length(matrix_list1)) {
+        if (NA %!in% matrix_list1[[o]]) {
+          # speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
           speciationp = ((matrix_list1[[o]][, 1])/sum(unlist(matrix_list1)))^ExpSpParm
-        stip[[o]] <- speciationp
-      }
-    }
-
-    #as logical...
-    speciatinglog = list()
-    for (o in 1:length(matrix_list1)) {
-      if (!is.null(stip[[o]])) {
-        if (NA %!in% (stip[[o]])) {
-          splog = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, stip[[o]]))
-          speciatinglog[[o]] <- splog
-        } else {
-          speciatinglog[[o]] <- matrix_list1[[o]]
+          stip[[o]] <- speciationp
         }
       }
-    }
-} else {
+
+      #as logical...
+      speciatinglog = list()
+      for (o in 1:length(matrix_list1)) {
+        if (!is.null(stip[[o]])) {
+          if (NA %!in% (stip[[o]])) {
+            splog = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, stip[[o]]))
+            speciatinglog[[o]] <- splog
+          } else {
+            speciatinglog[[o]] <- matrix_list1[[o]]
+          }
+        }
+      }
+    } else {
 
       speciatinglog = list()
       for (o in 1:length(matrix_list1)) {
@@ -321,31 +330,31 @@ print("first matrix done")
         speciatinglog[[o]] = spec
 
       }
-}
+    }
 
-      speciating = list()
-      for (o in 1:length(siteN)) {
-        i = 1
-        if (length(matrix_list1[[o]]) != 0){
-          spe = setdiff(rownames(matrix_list1[[o]])[speciatinglog[[o]]], extincttotal)
-          speciating[[o]] = spe
-        } else {
-          speciating[[o]] = NA
-        }
+    speciating = list()
+    for (o in 1:length(siteN)) {
+      i = 1
+      if (length(matrix_list1[[o]]) != 0){
+        spe = setdiff(rownames(matrix_list1[[o]])[speciatinglog[[o]]], extincttotal)
+        speciating[[o]] = spe
+      } else {
+        speciating[[o]] = NA
       }
+    }
 
-      for (o in 1:length(siteN)) {
-        if (NA %in% (speciating[[o]])) {
-          speciating[[o]] <- character(0)
-        }
+    for (o in 1:length(siteN)) {
+      if (NA %in% (speciating[[o]])) {
+        speciating[[o]] <- character(0)
       }
+    }
 
-      symp_sp <- list()
-      for (o in 1:length(speciating)) {
-        speciatin <- subset(speciating[[o]], speciating[[o]] != "1")
-        speciatin <- as.matrix(speciatin)
-        symp_sp[[o]] <- speciatin
-      }
+    symp_sp <- list()
+    for (o in 1:length(speciating)) {
+      speciatin <- subset(speciating[[o]], speciating[[o]] != "1")
+      speciatin <- as.matrix(speciatin)
+      symp_sp[[o]] <- speciatin
+    }
 
 
 
@@ -353,7 +362,7 @@ print("first matrix done")
 
     symp_sp <- DeleteDups(symp_sp)
 
-mag <- unlist(migratedata$allo)
+    mag <- unlist(migratedata$allo)
     ##make migrated species unable to speciaiton sympatrically
     for (o in 1:length(symp_sp)) {
       for (l in 1:length(symp_sp[[o]])) {
@@ -588,28 +597,37 @@ mag <- unlist(migratedata$allo)
       #   }
       # }
 
+
+    #  print(matrix_list5)
+
       #calculate extinction probability
       etip = list()
       for (o in 1:length(matrix_list5)) {
         if (NA %!in% matrix_list5[[o]]) {
           # extinctionp = 1 / (0.37 ^ 1.1) * exp(-1.1 * matrix_list5[[o]][, 1])
           if (NegExpEx) {
-            extinctionp = exp(exparm * matrix_list5[[o]][, 1])
+            #extinctionp = exp(exparm * matrix_list5[[o]][, 1])
+            #extinctionp = exparm2*matrix_list5[[o]][, 1]^exparm
+            extinctionp = 1- exp(exparm2*matrix_list5[[o]][, 1]^exparm)
             etip[[o]] <- extinctionp
           } else {
-          extinctionp = constantEX
-          etip[[o]] <- extinctionp
-        }
+            extinctionp = constantEX
+            etip[[o]] <- extinctionp
+          }
         }
       }
 
 
+#print(extinctionp)
 
+
+#
       # ##turning probabilities greater than 1 to 1
       # for (o in 1:length(matrix_list5)) {
       #   if (!is.null(etip[[o]])) {
+      #     if (NA %!in% matrix_list5[[o]]) {
       #     for (i in 1:length(etip[[o]])) {
-      #       if (!is.na(etip[[o]][i])) {
+      #     #  if (!is.na(etip[[o]][i])) {
       #         if (etip[[o]][i] > 1) {
       #           etip[[o]][i] <- 1
       #         }
@@ -705,14 +723,14 @@ mag <- unlist(migratedata$allo)
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
     migrates[[ipa]] = migratedata$allo
-   # trees[[ipa]] = tree
+    # trees[[ipa]] = tree
 
   }
-print(JmaxV)
+  print(JmaxV)
   return(
     list(
       tree = tree,
-     #trees = trees,
+      #trees = trees,
       #final tree
       #all trees by timeslice
       matrix_list = matrix_list6,
@@ -727,4 +745,3 @@ print(JmaxV)
 
 
 ####### Extra testing #######
-
