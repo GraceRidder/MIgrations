@@ -4,6 +4,8 @@
   mote <- matrixlist
   matrix_list1 <- matrixlist
 
+
+
   ##samples site locations based on dist(X)
   mig_site <- c()
   mig_loc <- c()

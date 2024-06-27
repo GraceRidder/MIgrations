@@ -17,7 +17,7 @@
 
 
 
-ETBD_migrateSYM = function(initialtree,
+ETBD_migrateSYM.NE = function(initialtree,
                            t = 10,
                            Jmax = 1000,
                            JmaxV = c(1000, 1000),
@@ -25,10 +25,10 @@ ETBD_migrateSYM = function(initialtree,
                            bud = T,
                            siteN = 2,
                            DIST = "NORM",
-                           psymp = .10,
+                           psymp = c(0.1,0.1),
                            watchgrow = F,
                            SADmarg = .1,
-                           exparm = -0.7,
+                           exparm = c(-0.7,-0.7),
                            NegExpEx = T,
                            isGrid = F,
                            ExpSpParm = 2,
@@ -36,8 +36,9 @@ ETBD_migrateSYM = function(initialtree,
                            SPgrow = .25,
                            splitparm = .5,
                            constantEX = .1,
-                           migprob = .4,
-                           exparm2 = .5
+                           migprob1 = .4,
+                           migprob2 = .4,
+                           exparm2 = c(.5,.5)
 )
 
 
@@ -235,8 +236,9 @@ ETBD_migrateSYM = function(initialtree,
     ##### selecting species to migrate ######
 
     if (length(siteN) > 1) {
-      dist <- makeLineDomain(length(siteN), migprob)
-
+      dist <- makeLineDomain(length(siteN), migprob1)
+      dist2 <- makeLineDomain(length(siteN), migprob2)
+      dist[2,] <- dist2[2,]
 
       migratedata <- Migrate(matrix_list05, dist, 1, siteN)
 
@@ -330,11 +332,13 @@ ETBD_migrateSYM = function(initialtree,
 
       speciatinglog = list()
       for (o in 1:length(matrix_list1)) {
-        spec = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, psymp))  ##probability of sympatric speciation psymp
+        spec = as.logical(rbinom(length(matrix_list1[[o]][,1]), 1, psymp[o]))   ##probability of sympatric speciation psymp
+        ##probability of sympatric speciation psymp
         speciatinglog[[o]] = spec
 
       }
     }
+
 
     speciating = list()
     for (o in 1:length(siteN)) {
@@ -612,7 +616,7 @@ ETBD_migrateSYM = function(initialtree,
           if (NegExpEx) {
             #extinctionp = exp(exparm * matrix_list5[[o]][, 1])
             #extinctionp = exparm2*matrix_list5[[o]][, 1]^exparm
-            extinctionp = 1- exp(exparm2*matrix_list5[[o]][, 1]^exparm)
+            extinctionp = 1- exp(exparm2[o]*matrix_list5[[o]][, 1]^exparm[o])
             etip[[o]] <- extinctionp
           } else {
             extinctionp = constantEX
