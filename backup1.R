@@ -217,7 +217,11 @@ ETBD_migrateSYM = function(initialtree,
     matrix_list0 <- matrix_list6
 
 
-    matrix_list0
+    if (NA %in% unlist(matrix_list0)){
+      print("NA in matrix 0")
+    }
+
+
     ##deleting extinct species from matrix list 6 from previous step
 
     matrix_list05 <- DeleteExtinct(matrix_list0)

@@ -559,7 +559,21 @@ ETBD_migrateSYM.NE = function(initialtree,
     }
 
 
+preSAD <- matrix_list5
 
+
+
+for( o in 1:length(matrix_list05)){
+  matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
+  attributes(matrix_list05[[o]])$na.action <- NULL
+}
+
+
+for( o in 1:length(matrix_list05)){
+  if (length(matrix_list05[[o]]) == 0){
+    print('site is extinct still')
+  }
+}
 
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
@@ -568,7 +582,7 @@ ETBD_migrateSYM.NE = function(initialtree,
         matrix_list5 <- xx
       }
     }
-    print(matrix_list5)
+
 
     if (DIST == "GEO") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -602,7 +616,21 @@ ETBD_migrateSYM.NE = function(initialtree,
         "NA in matrixlist5: problem with the SAD rank setting",
         ipa
       )
+
     }
+
+
+
+
+for(o in 1:length(matrix_list5)) {
+  if (length(matrix_list5[[o]]) == 1){
+  if (is.na(matrix_list5[[o]])) {
+    matrix_list5[[o]] <- preSAD[[o]]
+  }
+  }
+}
+
+
 
 
 
