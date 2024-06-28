@@ -20,8 +20,8 @@ if (length(unlist(allo_sp)) > 0) {
     triw[[g + 1]] <- trim[[o]][2]
     g <- g + 1
   }
-  
-  
+
+
   ##for budding speciation one branch has same abundance and new branch has 10% of original
   if (bud) {
     i  <- 1
@@ -38,8 +38,8 @@ if (length(unlist(allo_sp)) > 0) {
       }
     }
   }
-  
-  
+
+
   ##for splizting speciation 10% is subtracted from original and new branch is 10% of original
   # if (split) {
   #   i  <- 1
@@ -60,15 +60,15 @@ if (length(unlist(allo_sp)) > 0) {
   #     }
   #   }
   # }
-  
+
 
   #10% of parent population abundance
   flop <- as.matrix(as.numeric(fax) * splitparm)
-  
+
 
   ### pop is new species sizes and the new names
   pop <- allo_sp
-  
+
 
   i <- 1
   for (o in 1:length(allo_sp)) {
@@ -80,9 +80,9 @@ if (length(unlist(allo_sp)) > 0) {
     }
     pop[[o]] <- matrix(as.numeric(pop[[o]]))
   }
-  
-  
-  #### altering original names of species 
+
+
+  #### altering original names of species
   i <- 1
   for (o in 1:length(allo_sp)) {
     if (length(allo_sp[[o]]) >= 1) {
@@ -93,7 +93,7 @@ if (length(unlist(allo_sp)) > 0) {
       }
     }
   }
-  
+
   #### binding new species onto matrix
   morto <- list()
   for (o in 1:length(siteN)) {
@@ -102,8 +102,8 @@ if (length(unlist(allo_sp)) > 0) {
       morto[[o]] <- mart
     }
   }
-  
-  
+
+
 
   # Fix empty row names
   for (o in 1:length(siteN)) {
@@ -120,9 +120,9 @@ if (length(unlist(allo_sp)) > 0) {
 
 if (NA %in% unlist(matrix_list5)) {
   message(
-    "Problem with allopatric speciaiton",
-    ipa
+    "Problem with allopatric speciaiton"
   )
+  print(matrix_list5)
 }
 
 return(matrix_list5)

@@ -232,6 +232,16 @@ ETBD_migrateSYM.NE = function(initialtree,
     }
 
 
+    for( o in 1:length(matrix_list05)){
+      if (length(matrix_list05[[o]]) == 0){
+        print('site is extinct')
+      }
+    }
+
+
+
+
+
     ##### selecting species to migrate ######
 
     if (length(siteN) > 1) {
@@ -248,6 +258,7 @@ ETBD_migrateSYM.NE = function(initialtree,
       migratedata <- c()
 
     }
+
 
 
     matrix_list05 <- DeleteExtinct(matrix_list1)
@@ -278,7 +289,7 @@ ETBD_migrateSYM.NE = function(initialtree,
                                 migratedata$allo,
                                 migratedata$old,
                                 Atrip2,
-                                .8,
+                                splitparm,
                                 siteN)
     } else {
       matrix_list13 <- matrix_list1
@@ -549,7 +560,7 @@ ETBD_migrateSYM.NE = function(initialtree,
 
 
 
-    print(matrix_list5)
+
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -557,7 +568,7 @@ ETBD_migrateSYM.NE = function(initialtree,
         matrix_list5 <- xx
       }
     }
-
+    print(matrix_list5)
 
     if (DIST == "GEO") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
