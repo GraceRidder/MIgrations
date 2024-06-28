@@ -394,7 +394,86 @@ lines(density(LL2))
 
 
 
+system.time({
 
+  res1 = ETBD_migrateSYM.NE(
+    t =30,
+    DIST = "SRS",     ### NO, GEO, SRS, NORM
+    watchgrow = F,
+    SADmarg = .1,
+    siteN = 2,
+    JmaxV = c(2000, 2000),
+    NegExpEx = T,   ###dependent extinction
+    exparm = c(-.7,-.7) ,
+    exparm2 = c(-.35,-.3),
+
+    psymp = c(.3, .3),  ### sympatric speciation
+    ExpSp = F,      ### dependent speciation
+    ExpSpParm = 2,
+    constantEX = 0,
+    SPgrow = 0,
+    splitparm = .3, ### splitting
+    bud = T,
+    split = F,
+    migprob1 = 0,  ## probability of site one leaving
+    migprob2 = 0 ## probability of site two leaving
+
+
+  )
+
+})
+
+
+myTree <- ape::read.tree(text = res1$tree)
+myTree$Nnode
+plot(myTree, cex = .2)
+
+length(res1$matrix_list[[1]])
+length(res1$matrix_list[[2]])
+
+
+plot(dropExtinct(myTree), cex= .2)
+
+
+
+system.time({
+
+  res1 = ETBD_migrateSYM.NE(
+    t =80,
+    DIST = "SRS",     ### NO, GEO, SRS, NORM
+    watchgrow = F,
+    SADmarg = .1,
+    siteN = 2,
+    JmaxV = c(1500, 1500),
+    NegExpEx = T,   ###dependent extinction
+    exparm = c(-.7,-.7) ,
+    exparm2 = c(-.35,-.3),
+
+    psymp = c(.3, .3),  ### sympatric speciation
+    ExpSp = F,      ### dependent speciation
+    ExpSpParm = 2,
+    constantEX = 0,
+    SPgrow = 0,
+    splitparm = .3, ### splitting
+    bud = T,
+    split = F,
+    migprob1 = 0,  ## probability of site one leaving
+    migprob2 = 0 ## probability of site two leaving
+
+  )
+
+})
+
+
+myTree <- ape::read.tree(text = res1$tree)
+myTree$Nnode
+plot(myTree, cex = .2)
+
+length(res1$matrix_list[[1]])
+length(res1$matrix_list[[2]])
+
+
+plot(dropExtinct(myTree), cex= .2)
 
 X1 <- c()
 X2 <- c()
@@ -403,8 +482,7 @@ for (i in 1:length(res1$mig)){
   X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
 }
 
-plot(X2, typ = "l", col = "red", ylim =c(0,300), main = "species richness")
-
+plot(X2, typ = "l", col = "red", ylim =c(0,1000), main = "species richness")
 lines(X1, typ = "l", col = "blue")
 
 
@@ -416,9 +494,9 @@ for (i in 1:length(res1$mig)){
 }
 
 dev.off()
-plot(x2, typ = "l", main = "abundances")
+plot(x2, typ = "l", main = "abundances", col = 'red')
 lines(x1, typ = "l", col = "blue")
-lines(x2, typ = "l", col = "red")
+
 
 hist(res1$matrix_list[[1]], col = "red")
 hist(res1$matrix_list[[2]], col = "blue")

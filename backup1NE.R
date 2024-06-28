@@ -731,14 +731,14 @@ ETBD_migrateSYM.NE = function(initialtree,
     extinctsp[[ipa]] = ext
     mig[[ipa]] = matrix_list6
     migrates[[ipa]] = migratedata$allo
-    # trees[[ipa]] = tree
+     trees[[ipa]] = Ntree
 
   }
   print(JmaxV)
   return(
     list(
       tree = Ntree,
-      #trees = trees,
+      trees = trees,
       #final tree
       #all trees by timeslice
       matrix_list = matrix_list6,
