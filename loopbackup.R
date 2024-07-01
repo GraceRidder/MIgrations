@@ -655,6 +655,9 @@ lines(density(temper$LL), col = "blue")
 
 
 
+
+
+
 X11 <- c()
 X22 <- c()
 for (o in 1:length(rs)){
@@ -712,31 +715,39 @@ dev.off()
 plot(rowMeans(x11), typ = "l", main = "abundances", col = 'red')
 lines(rowMeans(x22), typ = "l", col = "blue")
 
-
+library(treestats)
 
 g <- c()
 b<- c()
 
-for (i in 1:100){
-  tree <-  rs[[1]]$reslist[[1]]$trees[[i]]
-  myTree <- ape::read.tree(text = tree)
-  g <- append(g, gammaStat(myTree))
-  b <- append(b, beta_statistic(myTree))
+
+for (o in 1:length(1:12)) {
+  if (length(rs[[o]][[1]][[1]]) > 3) {
+    for (i in 1:200) {
+      tree <-  rs[[1]]$reslist[[1]]$trees[[i]]
+      myTree <- ape::read.tree(text = tree)
+      mehtree <- drop.extinct(myTree)
+      g <- append(g, gammaStat(mehtree))
+      b <- append(b, beta_statistic(mehtree))
+    }
+  }
 }
 
 
-plot(b, typ = "l")
-plot(g, typ = "l")
 
-tree <-  res1$trees[[15]]
-tree
-myTree <- ape::read.tree(text = res1$tree)
+plot(b, typ = "l", ylim = c(-2,2), col = "purple")
+abline(h=0)
 
-library(geiger)
-plot(drop.extinct(myTree), cex = .2)
+plot(g, typ = "l", col = "orange")
+abline(h=0)
+
+
+
+#library(geiger)
+plot(myTree, cex = .2)
 axis(1)
 
-res1$mig[[17]]
+ gammaStat(myTree)
 
 
 library(RPANDA)
