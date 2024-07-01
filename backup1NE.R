@@ -82,13 +82,13 @@ ETBD_migrateSYM.NE = function(initialtree,
   #### A few small function needed for the main function
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
-  myFun <- function(n = 600000) {
+  myFun <- function(n = 1000000) {
     a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
     paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(600000)
+  abcd <-myFun(1000000)
 
 
 
