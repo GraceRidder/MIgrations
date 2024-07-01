@@ -39,10 +39,6 @@ grow.newick <-function(speciesMatrix, pine, abcd) {
 #Grow branches
 
 
-tree <- "(t001:99,(t003:9,t004:9)t002:9);"
-tr <- tree
-tip ="t001"
-
 
 survive.NE=function(tr, tip){
 

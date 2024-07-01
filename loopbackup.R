@@ -713,6 +713,32 @@ plot(rowMeans(x11), typ = "l", main = "abundances", col = 'red')
 lines(rowMeans(x22), typ = "l", col = "blue")
 
 
+
+g <- c()
+b<- c()
+
+for (i in 1:100){
+  tree <-  rs[[1]]$reslist[[1]]$trees[[i]]
+  myTree <- ape::read.tree(text = tree)
+  g <- append(g, gammaStat(myTree))
+  b <- append(b, beta_statistic(myTree))
+}
+
+
+plot(b, typ = "l")
+plot(g, typ = "l")
+
+tree <-  res1$trees[[15]]
+tree
+myTree <- ape::read.tree(text = res1$tree)
+
+library(geiger)
+plot(drop.extinct(myTree), cex = .2)
+axis(1)
+
+res1$mig[[17]]
+
+
 library(RPANDA)
 tree <-  rs[[1]]$reslist[[1]]$trees[[100]]
 myTree <- ape::read.tree(text = tree)
