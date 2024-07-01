@@ -35,11 +35,24 @@ grow.newick <-function(speciesMatrix, pine, abcd) {
 }
 
 
+
+#Grow branches
+
+
+tree <- "(t001:99,(t003:9,t004:9)t002:9);"
+tr <- tree
+tip ="t001"
+
+
 survive.NE=function(tr, tip){
-  x <- unlist(gregexpr(tip, tr))
-  x = (x+ nchar(tip))
-  substr(tr, x+1, x+1) <- as.character(as.numeric(substr(tr, x+1,x+1))+1)
-  return(tr)
+
+  pattern <- paste0(tip, ":(\\d+)")
+  extracted_number <- as.numeric(sub(paste0(".*", tip, ":(\\d+).*"), "\\1", tr))
+  new_number <- extracted_number + 1
+  new_string <- sub(paste0("(", tip, "):\\d+"), paste0("\\1:", new_number), tr)
+
+
+  return(new_string)
 }
 
 

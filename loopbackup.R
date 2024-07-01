@@ -439,7 +439,7 @@ plot(dropExtinct(myTree), cex= .2)
 system.time({
 
   res1 = ETBD_migrateSYM.NE(
-    t =80,
+    t =100,
     DIST = "SRS",     ### NO, GEO, SRS, NORM
     watchgrow = F,
     SADmarg = .1,
@@ -482,7 +482,7 @@ for (i in 1:length(res1$mig)){
   X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
 }
 
-plot(X2, typ = "l", col = "red", ylim =c(0,1000), main = "species richness")
+plot(X2, typ = "l", col = "red", ylim =c(0,600), main = "species richness")
 lines(X1, typ = "l", col = "blue")
 
 
@@ -494,12 +494,12 @@ for (i in 1:length(res1$mig)){
 }
 
 dev.off()
-plot(x2, typ = "l", main = "abundances", col = 'red')
-lines(x1, typ = "l", col = "blue")
+plot(x1, typ = "l", main = "abundances", col = 'red')
+lines(x2, typ = "l", col = "blue")
 
 
-hist(res1$matrix_list[[1]], col = "red")
-hist(res1$matrix_list[[2]], col = "blue")
+hist(res1$matrix_list[[2]], col = "red")
+hist(res1$matrix_list[[1]], col = "blue")
 
 
 ####small helper funciton
@@ -650,6 +650,75 @@ sum(as.numeric(temper$factor.trait.bi1.)-1)/length(temper[,1])
 
 plot(density(tropic$LL), col = "red")
 lines(density(temper$LL), col = "blue")
+
+
+
+
+
+X11 <- c()
+X22 <- c()
+for (o in 1:length(rs)){
+  if (length(rs[[o]][[1]][[1]]) > 3){
+res1<- rs[[o]]$reslist[[1]]
+
+X1 <- c()
+X2 <- c()
+for (i in 1:length(res1$mig)){
+  X1 <- append(X1,length(res1$mig[i][[1]][[1]]))
+  X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
+}
+ if (length(X1) ==200){
+X11 <- cbind(X11, X1)
+X22 <- cbind(X22, X2)
+}
+
+}
+}
+
+
+
+
+plot(rowMeans(X22), typ = "l", col = "red", ylim =c(0,500), main = "species richness")
+lines(rowMeans(X11), typ = "l", col = "blue")
+
+plot(X11[,1], typ = "l", col = "red", ylim =c(0,500), main = "species richness")
+lines(X11[,10], typ = "l", col = "red")
+
+x11 <- c()
+x22 <- c()
+for (o in 1:length(1:12)){
+
+ if (length(rs[[o]][[1]][[1]]) > 3){
+  res1<- rs[[o]]$reslist[[1]]
+
+  x1 <- c()
+  x2 <- c()
+  for (i in 1:length(res1$mig)){
+    x1 <- append(x1,sum(res1$mig[i][[1]][[1]][,1]))
+    x2 <- append(x2,sum(res1$mig[i][[1]][[2]][,1]))
+  }
+  if (length(x1) ==200){
+    x11 <- cbind(x11, x1)
+    x22 <- cbind(x22, x2)
+  }
+
+ }
+
+}
+
+
+
+dev.off()
+plot(rowMeans(x11), typ = "l", main = "abundances", col = 'red')
+lines(rowMeans(x22), typ = "l", col = "blue")
+
+
+library(RPANDA)
+tree <-  rs[[1]]$reslist[[1]]$trees[[100]]
+myTree <- ape::read.tree(text = tree)
+c <- spectR(myTree)
+plot_spectR(c)
+c
 
 
 
