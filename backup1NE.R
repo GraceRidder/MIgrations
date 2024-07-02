@@ -38,7 +38,9 @@ ETBD_migrateSYM.NE = function(initialtree,
                            constantEX = .1,
                            migprob1 = .4,
                            migprob2 = .4,
-                           exparm2 = c(.5,.5)
+                           exparm2 = c(.5,.5),
+                           Asteroid = 40,
+                           Asteroidimpact = c(-.35, -.35)
 )
 
 
@@ -82,13 +84,13 @@ ETBD_migrateSYM.NE = function(initialtree,
   #### A few small function needed for the main function
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
-  myFun <- function(n = 1000000) {
+  myFun <- function(n = 5000000) {
     a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
     paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(1000000)
+  abcd <-myFun(5000000)
 
 
 
@@ -631,6 +633,12 @@ for(o in 1:length(matrix_list5)) {
 }
 
 
+if (ipa %in%  Asteroid:(Asteroid+5)) {
+  exparm22 <- Asteroidimpact
+  print("asteroid hits")
+} else {
+  exparm22 <- exparm2
+}
 
 
 
@@ -656,7 +664,7 @@ for(o in 1:length(matrix_list5)) {
           if (NegExpEx) {
             #extinctionp = exp(exparm * matrix_list5[[o]][, 1])
             #extinctionp = exparm2*matrix_list5[[o]][, 1]^exparm
-            extinctionp = 1- exp(exparm2[o]*matrix_list5[[o]][, 1]^exparm[o])
+            extinctionp = 1- exp(exparm22[o]*matrix_list5[[o]][, 1]^exparm[o])
             etip[[o]] <- extinctionp
           } else {
             extinctionp = constantEX
