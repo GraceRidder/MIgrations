@@ -40,7 +40,7 @@ ETBD_migrateSYM.NE = function(initialtree,
                            migprob2 = .4,
                            exparm2 = c(.5,.5),
                            Asteroid = 40,
-                           Asteroidimpact = c(-.35, -.35)
+                           Asteroidimpact = c(-.2, -.2)
 )
 
 
@@ -211,7 +211,7 @@ ETBD_migrateSYM.NE = function(initialtree,
 
 
 
-  print("version newick")
+  print("version waterbuffalo")
 
   for (ipa in 1:t)
 
