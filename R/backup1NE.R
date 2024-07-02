@@ -38,7 +38,9 @@ ETBD_migrateSYM.NE = function(initialtree,
                            constantEX = .1,
                            migprob1 = .4,
                            migprob2 = .4,
-                           exparm2 = c(.5,.5)
+                           exparm2 = c(.5,.5),
+                           Asteroid = 40,
+                           Asteroidimpact = c(-.2, -.2)
 )
 
 
@@ -82,13 +84,13 @@ ETBD_migrateSYM.NE = function(initialtree,
   #### A few small function needed for the main function
   '%!in%' <- function(x,y)!('%in%'(x,y))
 
-  myFun <- function(n = 100000) {
+  myFun <- function(n = 5000000) {
     a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
     paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(100000)
+  abcd <-myFun(5000000)
 
 
 
@@ -209,7 +211,7 @@ ETBD_migrateSYM.NE = function(initialtree,
 
 
 
-  print("version newick")
+  print("version waterbuffalo")
 
   for (ipa in 1:t)
 
@@ -226,11 +228,20 @@ ETBD_migrateSYM.NE = function(initialtree,
     matrix_list05 <- DeleteExtinct(matrix_list0)
     matrix_list55 <- DeleteExtinct(matrix_list0)
 
-
     for( o in 1:length(matrix_list05)){
       matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
       attributes(matrix_list05[[o]])$na.action <- NULL
     }
+
+
+    for( o in 1:length(matrix_list05)){
+      if (length(matrix_list05[[o]]) == 0){
+        print('site is extinct')
+      }
+    }
+
+
+
 
 
     ##### selecting species to migrate ######
@@ -251,6 +262,7 @@ ETBD_migrateSYM.NE = function(initialtree,
     }
 
 
+
     matrix_list05 <- DeleteExtinct(matrix_list1)
 
     for( o in 1:length(matrix_list05)){
@@ -260,7 +272,6 @@ ETBD_migrateSYM.NE = function(initialtree,
 
     matrix_list1 <- matrix_list05
     temptree <- pine
-
 
 
     ##adding species from allopatric speciaiton
@@ -280,7 +291,7 @@ ETBD_migrateSYM.NE = function(initialtree,
                                 migratedata$allo,
                                 migratedata$old,
                                 Atrip2,
-                                .8,
+                                splitparm,
                                 siteN)
     } else {
       matrix_list13 <- matrix_list1
@@ -396,7 +407,7 @@ ETBD_migrateSYM.NE = function(initialtree,
     abcd <- Ne$abcd
 
 
-    Nfull.tree
+
     #temp hold all unique species
     temp <- unique(unlist(symp_sp))
     symptrip <- trip2
@@ -549,6 +560,23 @@ ETBD_migrateSYM.NE = function(initialtree,
       plot(tree, cex = .5)
     }
 
+
+preSAD <- matrix_list5
+
+
+
+for( o in 1:length(matrix_list05)){
+  matrix_list05[[o]] <- (na.exclude(matrix_list05[[o]]))
+  attributes(matrix_list05[[o]])$na.action <- NULL
+}
+
+
+for( o in 1:length(matrix_list05)){
+  if (length(matrix_list05[[o]]) == 0){
+    print('site is extinct still')
+  }
+}
+
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -590,7 +618,27 @@ ETBD_migrateSYM.NE = function(initialtree,
         "NA in matrixlist5: problem with the SAD rank setting",
         ipa
       )
+
     }
+
+
+
+
+for(o in 1:length(matrix_list5)) {
+  if (length(matrix_list5[[o]]) == 1){
+  if (is.na(matrix_list5[[o]])) {
+    matrix_list5[[o]] <- preSAD[[o]]
+  }
+  }
+}
+
+
+if (ipa %in%  Asteroid:(Asteroid+5)) {
+  exparm22 <- Asteroidimpact
+  print("asteroid hits")
+} else {
+  exparm22 <- exparm2
+}
 
 
 
@@ -616,7 +664,7 @@ ETBD_migrateSYM.NE = function(initialtree,
           if (NegExpEx) {
             #extinctionp = exp(exparm * matrix_list5[[o]][, 1])
             #extinctionp = exparm2*matrix_list5[[o]][, 1]^exparm
-            extinctionp = 1- exp(exparm2[o]*matrix_list5[[o]][, 1]^exparm[o])
+            extinctionp = 1- exp(exparm22[o]*matrix_list5[[o]][, 1]^exparm[o])
             etip[[o]] <- extinctionp
           } else {
             extinctionp = constantEX
