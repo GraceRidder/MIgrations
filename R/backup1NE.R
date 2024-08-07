@@ -40,7 +40,8 @@ ETBD_migrateSYM.NE = function(initialtree,
                            migprob2 = .4,
                            exparm2 = c(.5,.5),
                            Asteroid = 40,
-                           Asteroidimpact = c(-.2, -.2)
+                           Asteroidimpact = c(-.2, -.2),
+                           GROW = T
 )
 
 
@@ -90,7 +91,7 @@ ETBD_migrateSYM.NE = function(initialtree,
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
-  abcd <-myFun(5000000)
+  abcd <-myFun(50000)
 
 
 
@@ -305,12 +306,13 @@ ETBD_migrateSYM.NE = function(initialtree,
 
     #### growing species by SPgrow ####
 
-    if (ExpSp){
+    if (GROW){
       mat <- list()
       for ( o in 1:length(matrix_list1)){
         mat[[o]] <- matrix_list1[[o]] + (matrix_list1[[o]]*SPgrow)
       }
       matrix_list1 <-  mat
+      "grpwing"
     }
 
 
@@ -577,6 +579,11 @@ for( o in 1:length(matrix_list05)){
   }
 }
 
+
+if (!GROW){
+
+print('still sad')
+
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
       if (length(unmatrixlist(matrix_list5)) > 5) {
@@ -622,6 +629,9 @@ for( o in 1:length(matrix_list05)){
     }
 
 
+}
+
+
 
 
 for(o in 1:length(matrix_list5)) {
@@ -633,7 +643,7 @@ for(o in 1:length(matrix_list5)) {
 }
 
 
-if (ipa %in%  Asteroid:(Asteroid+5)) {
+if (ipa %in%  Asteroid:(Asteroid+100)) {
   exparm22 <- Asteroidimpact
   print("asteroid hits")
 } else {

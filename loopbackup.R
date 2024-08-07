@@ -71,6 +71,8 @@ library(paleotree)
 x = 1:3
 DRs <- c()
 
+
+
 for (o in 1:length(rs)) {
   tree <- rs[[o]]$reslist[[1]]$tree
   DRstats <- c()
@@ -85,12 +87,124 @@ for (o in 1:length(rs)) {
 }
 
 
+gammaStat(s)
+
+s <- drop.extinct(q)
+
+q <- timeSliceTree(tree, 3300, plot = F) ### from the tips?
+
+rw <- treeSlice(tree, 100,  trivial = F) ### from the root?
+abline(v = 45)
+
+rw
+
+wed = c()
+wed <- append(wed, gammaStat(drop.extinct(rw[[12]])))
+
+mean(na.omit(wed))
+
+
+plot(drop.extinct(tree), cex = .2)
+axis(1)
+
+rw
+
+plot(drop.extinct(rw[[5]]), cex = .2)
+
+
+tree <- ape::read.tree(text = res1$tree)
+
+plot(drop.extinct(tree), cex = .2)
+axis(1)
+plot(tree, cex = .2)
+
+rw <- treeSlice(tree, 2, trivial = F)
+plot(drop.extinct(rw[[5]]), cex = .2)
+
+gammaStat(drop.extinct(rw[[1]]))
+
+
+
+rw
+
+
+d <- c()
+for( l in 1:length(subtrees)){
+  d <- append(d, length(subtrees[[l]]))
+}
+plot(d, typ = 'l')
+
+
+X = 100:1000
+
+x = c()
+D = 10
+for ( l in 1:100){
+  x <- append(x, D)
+  D = D+100
+}
+
+
+subtrees <- list()
+forwardslice <- list()
+for (i in 1:length(X)){
+subtrees[[i]] <- treeSlice(tree, X[i], trivial = F)
+forwardslice[[i]] <- try(timeSliceTree(tree, X[i], plot = F))
+}
+
+
+fud = c()
+for ( i in 1:length(subtrees)){
+
+fud <- append(fud, length(subtrees[[i]]))
+}
+
+plot(fud, typ = 'l')
+
+
+
+gams <- c()
+for( i in 1:length(forwardslice)){
+    if (length(forwardslice[[i]][[1]])>20){
+      gams <- append(gams, gammaStat(drop.extinct(forwardslice[[i]])))
+  }
+}
+
+
+gams1 <- c()
+for( i in 1:length(subtrees)){
+  temps <- c()
+  for ( o in 1:length(subtrees[[i]])){
+      if (is.phylo(subtrees[[i]][[o]])){
+        if (subtrees[[i]][[o]]$Nnode > 25){
+          if (subtrees[[i]][[o]]$Nnode != length(is.extinct(subtrees[[i]][[o]])))
+        tres <-  drop.extinct(subtrees[[i]][[o]])
+    temps <- append(temps, gammaStat(tres))
+    }
+      }
+  }
+    gams1 <- append(gams1, mean(temps))
+}
 
 
 
 
+plot(rev(gams), ylim = c(-5,15), col = 'red', typ = 'l')
+#plot(log(d), typ = 'l', ylim = c(-5, 5))
+lines(gams1, col = 'green', add = T, type = 'l', ylim = c(-5, 5))
+abline(h=0)
+abline(h = -1.993518)
+abline(v = 100)
 
+plot(drop.extinct(tree), cex=.2)
+gams1[3300]
 
+test <- treeSlice(tree, 1000, trivial = T)
+
+?treeSlice() ## cuts from the root to the tips
+?timeSliceTree ## cuts from the tip to the root
+
+View(subtrees)
 
 fulltrops <- c()
 fulltemps <- c()
@@ -264,27 +378,16 @@ library("profvis")
 
 treelist <- list()
 miglist <- list()
+
 for (i in 1:10){
- profvis({res1 = ETBD_migrateSYM(
-    t =30,
-    DIST = "SRS",     ### NO, GEO, SRS, NORM
-    watchgrow = F,
-    SADmarg = .1,
-    siteN = 2,
-    JmaxV = c(1500, 2500),
-    NegExpEx = T,   ###dependent extinction
-    exparm = -.7,
-    psymp = .2,
-    ExpSp = F,      ###dependent speciation
-    ExpSpParm = 2,
-    constantEX = 0,
-    SPgrow = 0,
-    splitparm = .3, ### splitting
-    bud = T,
-    split = F,
-    migprob = .0,
-    exparm2 = -.3
-  )}
+
+ profvis({
+
+
+  c <-  grow.newick(as.matrix('WNNRA4725L','NQAGN0908G','HUNRR6664M','QRTZV6681X'), tree, abcd)
+
+   c
+    }
 )
 
 
@@ -293,10 +396,9 @@ for (i in 1:10){
 }
 
 
-library(geiger)
 
 
-
+head(rs[[1]]$reslist[[1]]$tree)
 
 plot(res1$tree, show.tip.label = F)
 axis(1)
@@ -435,71 +537,13 @@ length(res1$matrix_list[[2]])
 plot(dropExtinct(myTree), cex= .2)
 
 
+library(TreeSim)
 
-system.time({
+w <- sim.bd.taxa(40, 1, .3, .2)
 
-  res1 = ETBD_migrateSYM.NE(
-    t =100,
-    DIST = "SRS",     ### NO, GEO, SRS, NORM
-    watchgrow = F,
-    SADmarg = .1,
-    siteN = 2,
-    JmaxV = c(1500, 1500),
-    NegExpEx = T,   ###dependent extinction
-    exparm = c(-.7,-.7) ,
-    exparm2 = c(-.35,-.3),
+plot.phylo(drop.extinct(w[[1]]),show.tip.label = F )
 
-    psymp = c(.3, .3),  ### sympatric speciation
-    ExpSp = F,      ### dependent speciation
-    ExpSpParm = 2,
-    constantEX = 0,
-    SPgrow = 0,
-    splitparm = .3, ### splitting
-    bud = T,
-    split = F,
-    migprob1 = 0,  ## probability of site one leaving
-    migprob2 = 0 ## probability of site two leaving
-
-  )
-
-})
-
-
-myTree <- ape::read.tree(text = res1$tree)
-myTree$Nnode
-plot(myTree, cex = .2)
-
-length(res1$matrix_list[[1]])
-length(res1$matrix_list[[2]])
-
-
-plot(dropExtinct(myTree), cex= .2)
-
-X1 <- c()
-X2 <- c()
-for (i in 1:length(res1$mig)){
-  X1 <- append(X1,length(res1$mig[i][[1]][[1]]))
-  X2 <- append(X2,length(res1$mig[i][[1]][[2]]))
-}
-
-plot(X2, typ = "l", col = "red", ylim =c(0,600), main = "species richness")
-lines(X1, typ = "l", col = "blue")
-
-
-x1 <- c()
-x2 <- c()
-for (i in 1:length(res1$mig)){
-  x1 <- append(x1,sum(res1$mig[i][[1]][[1]][,1]))
-  x2 <- append(x2,sum(res1$mig[i][[1]][[2]][,1]))
-}
-
-dev.off()
-plot(x1, typ = "l", main = "abundances", col = 'red')
-lines(x2, typ = "l", col = "blue")
-
-
-hist(res1$matrix_list[[2]], col = "red")
-hist(res1$matrix_list[[1]], col = "blue")
+res1$trees[[420]]
 
 
 ####small helper funciton
@@ -655,9 +699,6 @@ lines(density(temper$LL), col = "blue")
 
 
 
-
-
-
 X11 <- c()
 X22 <- c()
 for (o in 1:length(rs)){
@@ -679,13 +720,12 @@ X22 <- cbind(X22, X2)
 }
 
 
+dim(X11)
+
+plot(rowMeans(X11), typ = "l", col = "red", ylim =c(0,1000), main = "species richness")
+lines(rowMeans(X22), typ = "l", col = "blue")
 
 
-plot(rowMeans(X22), typ = "l", col = "red", ylim =c(0,500), main = "species richness")
-lines(rowMeans(X11), typ = "l", col = "blue")
-
-plot(X11[,1], typ = "l", col = "red", ylim =c(0,500), main = "species richness")
-lines(X11[,10], typ = "l", col = "red")
 
 x11 <- c()
 x22 <- c()
@@ -710,35 +750,45 @@ for (o in 1:length(1:12)){
 }
 
 
+dim(x11)
 
-dev.off()
-plot(rowMeans(x11), typ = "l", main = "abundances", col = 'red')
+plot(rowMeans(x11), typ = "l", main = "abundances", col = 'red', ylim = c(0,3000))
 lines(rowMeans(x22), typ = "l", col = "blue")
 
 library(treestats)
+library(ape)
+library(paleotree)
+library(geiger)
 
-g <- c()
-b<- c()
-
+G <- c()
+B<- c()
 
 for (o in 1:length(1:12)) {
   if (length(rs[[o]][[1]][[1]]) > 3) {
+    print("thinking...")
+    g <- c()
+    b<- c()
     for (i in 1:200) {
-      tree <-  rs[[1]]$reslist[[1]]$trees[[i]]
+      tree <-  rs[[o]]$reslist[[1]]$trees[[i]]
       myTree <- ape::read.tree(text = tree)
       mehtree <- drop.extinct(myTree)
       g <- append(g, gammaStat(mehtree))
       b <- append(b, beta_statistic(mehtree))
     }
+
+    if (length(g) ==200){
+      G <- cbind(G, g)
+      B <- cbind(B, b)
+    }
   }
 }
 
 
-
-plot(b, typ = "l", ylim = c(-2,2), col = "purple")
+dim(B)
+plot(rowMeans(B), typ = "l", ylim = c(-2,2), col = "purple")
 abline(h=0)
 
-plot(g, typ = "l", col = "orange")
+plot(rowMeans(na.omit(G)), typ = "l", col = "orange")
 abline(h=0)
 
 
@@ -756,6 +806,23 @@ myTree <- ape::read.tree(text = tree)
 c <- spectR(myTree)
 plot_spectR(c)
 c
+
+
+
+
+list <- c( 19, 3, 6, 1, 5)
+
+
+temp <- list
+for(i in 1:length(list)){
+  temp[i] <- min(list)
+  list <- list[-c(match(min(list), list))]
+}
+
+return(head(temp))
+
+
+
 
 
 
