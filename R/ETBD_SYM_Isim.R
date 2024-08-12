@@ -12,7 +12,7 @@
 # source("FC_Migrate.R")
 # source("FC_DeleteExtinct.R")
 # source("FC_DeleteDups.R")
- install.packages("ETBDsim")
+# install.packages("ETBDsim")
 # library(ETBDsim)
 
 
