@@ -18,10 +18,6 @@ MakeSAD = function(matlist, sadmarg, Jmax){
 
   S <- SV
 
-#  f <- function(S) {
-#    Jmax * (S / (100 + S))
-#  }
-
 
   J <- c()
  for ( i in 1:length(Jmax)){

@@ -18,13 +18,13 @@
 
 
 ETBD_migrateSYM.NE = function(initialtree,
-                           t = 10,
+                           t = 100,
                           # Jmax = 1000,
                            JmaxV = c(1000, 1000),
                            split = F,
                            bud = T,
                            siteN = 2,
-                           DIST = "NORM",
+                           DIST = "SRS",
                            psymp = c(0.1,0.1),
                            watchgrow = F,
                            SADmarg = .1,
@@ -36,12 +36,12 @@ ETBD_migrateSYM.NE = function(initialtree,
                            SPgrow = .25,
                            splitparm = .5,
                            constantEX = .1,
-                           migprob1 = .4,
-                           migprob2 = .4,
+                           migprob1 = 0,
+                           migprob2 = 0,
                            exparm2 = c(.5,.5),
                            Asteroid = 40,
                            Asteroidimpact = c(-.2, -.2),
-                           GROW = T,
+                           GROW = F,
                            Speed = c(1,1),
                            timedelay = 0,
                            delay = c(1,1)
@@ -567,7 +567,8 @@ ETBD_migrateSYM.NE = function(initialtree,
 
 
     if (watchgrow) {
-      plot(tree, cex = .5)
+      tree <- ape::read.tree(text = Ntree)
+      plot(tree, show.tip.label = F)
     }
 
 
@@ -590,7 +591,7 @@ for( o in 1:length(matrix_list05)){
 
 if (!GROW){
 
-print('still sad')
+#print('still sad')
 
     ### RANKS ABUNDANCES AND DRAWS FROM SAD Fishers log series distribution
     if (DIST == "SRS") {
@@ -660,7 +661,7 @@ if (ipa %in%  Asteroid:(Asteroid+100)) {
 
 if (ipa %in%  1:(1+timedelay)) {
   Speed <- delay
-  print("site waiting")
+  #print("site waiting")
 } else {
   Speed <- c(1,1)
 }
