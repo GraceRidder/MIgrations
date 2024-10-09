@@ -4,18 +4,6 @@
 # On R-Studio, use:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-# Sourcing functions ----
-#  source("FC_namesSpecies.R")
-# source("FC_grow_tree.R")
-# source("FC_SAD2.0.R")
-# source("ETBD_Initialization_Jun13.R")
-# source("FC_Migrate.R")
-# source("FC_DeleteExtinct.R")
-# source("FC_DeleteDups.R")
-# install.packages("ETBDsim")
- #library(ETBDsim)
-
-
 
 ETBD_migrateSYM.NE = function(initialtree,
                            t = 100,
