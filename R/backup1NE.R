@@ -7,7 +7,6 @@
 
 ETBD_migrateSYM.NE = function(initialtree,
                            t = 100,
-                          # Jmax = 1000,
                            JmaxV = c(1000, 1000),
                            split = F,
                            bud = T,
