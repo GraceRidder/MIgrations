@@ -18,7 +18,8 @@ ETBD_migrateSYM.NE = function(initialtree,
                            exparm = c(-0.7,-0.7),
                            NegExpEx = T,
                            isGrid = F,
-                           ExpSpParm = 2,
+                           ExpSpParm = .7,
+                           ExpSpParm2 = -.1,
                            ExpSp = T,
                            SPgrow = .25,
                            splitparm = .5,
@@ -315,7 +316,9 @@ ETBD_migrateSYM.NE = function(initialtree,
       for (o in 1:length(matrix_list1)) {
         if (NA %!in% matrix_list1[[o]]) {
           # speciationp = ((matrix_list1[[o]][, 1])/JmaxV[o])^ExpSpParm
-          speciationp = ((matrix_list1[[o]][, 1])/sum(unlist(matrix_list1[[o]])))^ExpSpParm
+        #  speciationp = ((matrix_list1[[o]][, 1])/sum(unlist(matrix_list1[[o]])))^ExpSpParm
+          speciationp = 1- exp(ExpSpParm2[o]*matrix_list1[[o]][, 1]^ExpSpParm[o])
+
           speciationp = speciationp*Speed[o]
           stip[[o]] <- speciationp
         }
@@ -451,7 +454,7 @@ ETBD_migrateSYM.NE = function(initialtree,
               row.names(matrix_list4[[o]])[m][k] = paste(tri[i], sep = "")
               fax[i] <- (matrix_list4[[o]])[m][k]
               faax <- (matrix_list4[[o]])[m][k]
-              faxtax <- as.numeric(faax) * 0.1
+              faxtax <- as.numeric(faax) * splitparm
               matrix_list4[[o]][m][k] <-
                 matrix_list4[[o]][m][k] - faxtax
               i <- i + 1
