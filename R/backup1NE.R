@@ -32,7 +32,9 @@ ETBD_migrateSYM.NE = function(initialtree,
                            GROW = F,
                            Speed = c(1,1),
                            timedelay = 0,
-                           delay = c(1,1)
+                           delay = c(1,1),
+                           initialsize = 100,
+                           aslength = 10
 )
 
 
@@ -94,7 +96,7 @@ ETBD_migrateSYM.NE = function(initialtree,
     #initial species sizes
     if (siteN != 1){
       siteN = 1:siteN
-      initialsize = 100
+      initialsize = initialsize
       names = as.factor(c(paste(
         "t", stringr::str_pad(siteN, 3, pad = "0"), sep = ""
       )))
@@ -150,7 +152,7 @@ ETBD_migrateSYM.NE = function(initialtree,
 
   ########### initialization for ONE site ##########
   if (length(siteN) == 1){
-    initialsize = 100
+    initialsize = initialsize
     site1 <- 1:2
     names1 = as.factor(c(paste(
       "t", stringr::str_pad(site1, 3, pad = "0"), sep = ""
@@ -628,6 +630,10 @@ if (!GROW){
     }
 
 
+} else {
+
+  xx <- NoForce(matrix_list5, JmaxV)
+  matrix_list5 <- xx
 }
 
 
@@ -642,7 +648,7 @@ for(o in 1:length(matrix_list5)) {
 }
 
 
-if (ipa %in%  Asteroid:(Asteroid+100)) {
+if (ipa %in%  Asteroid:(Asteroid+aslength)) {
   exparm22 <- Asteroidimpact
   print("asteroid hits")
 } else {

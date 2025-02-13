@@ -1,7 +1,5 @@
 #SAD generators
 
-NoForce(res1$matrix_list, Jmax)
-
 NoForce = function(matlist, Jmax){
 
   SV <- c()
@@ -27,7 +25,7 @@ newamt <- matlist
 
 for (i in 1:length(matlist)) {
   if (oldJ[[i]]  > J[[i]]) {
-    newamt[[i]] <- newamt[[i]] - (oldJ[[i]] - J[[i]]) / S[i]
+    print("above J nulcline")
   } else {
     newamt[[i]] <- newamt[[i]] + (oldJ[[i]] + J[[i]]) / S[i]
   }
