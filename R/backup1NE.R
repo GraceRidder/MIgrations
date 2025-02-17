@@ -4,6 +4,7 @@
 # On R-Studio, use:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
+library(TTR)
 
 ETBD_migrateSYM.NE = function(initialtree,
                            t = 100,
@@ -34,7 +35,8 @@ ETBD_migrateSYM.NE = function(initialtree,
                            timedelay = 0,
                            delay = c(1,1),
                            initialsize = 100,
-                           aslength = 10
+                           aslength = 10,
+                           threshold = .1
 )
 
 
@@ -50,6 +52,7 @@ ETBD_migrateSYM.NE = function(initialtree,
   trees = list()
   migrates = list()
   exty = list()
+  richy <- c()
 
 
   ##run these to run a time step individually for sim testing
@@ -81,7 +84,7 @@ ETBD_migrateSYM.NE = function(initialtree,
 
   myFun <- function(n = 5000000) {
     a <- do.call(paste0, replicate(5, sample(LETTERS, n, TRUE), FALSE))
-    paste0(a, sprintf("%04d", sample(9999, n, TRUE)), sample(LETTERS, n, TRUE))
+    paste0(a, sprintf("%04d", sample(99999, n, TRUE)), sample(LETTERS, n, TRUE))
   }
 
   #yes the simulation will crash if you genrate more that 3 million species ...
@@ -635,6 +638,59 @@ if (!GROW){
   xx <- NoForce(matrix_list5, JmaxV)
   matrix_list5 <- xx
 }
+
+
+
+library(TTR)
+richy <- append(richy, length(unmatrixlist(matrix_list5)))
+
+if (length(richy)> 40){   ###### number of time steps before measuring
+  ema_values <- EMA(richy, n = 10)  # Smooth data
+  # Loop to check stabilization
+  for (t in 2:length(ema_values)) {
+    if (!is.na(ema_values[t]) && !is.na(ema_values[t-1])) {  # Skip NA values
+      change <- abs(ema_values[t] - ema_values[t-1])
+
+      if (change < threshold) {
+        print(paste("Stopping at time step:", t))
+        return(
+          list(
+            tree = Ntree,
+            trees = trees,
+            #final tree
+            #all trees by timeslice
+            matrix_list = matrix_list6,
+            mig = mig,
+            migrates = migrates,
+            exty = extinctsp,
+            symp = symp
+          )
+        )
+
+      }
+    }
+  }
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
