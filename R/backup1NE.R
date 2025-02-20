@@ -4,7 +4,7 @@
 # On R-Studio, use:
 #setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
-library(TTR)
+
 
 ETBD_migrateSYM.NE = function(initialtree,
                            t = 100,
@@ -36,7 +36,8 @@ ETBD_migrateSYM.NE = function(initialtree,
                            delay = c(1,1),
                            initialsize = 100,
                            aslength = 10,
-                           threshold = .1
+                           threshold = .1,
+                           reggie = ExpSpParm2
 )
 
 
@@ -53,7 +54,7 @@ ETBD_migrateSYM.NE = function(initialtree,
   migrates = list()
   exty = list()
   richy <- c()
-
+  con = c()
 
   ##run these to run a time step individually for sim testing
   # ipa = 1
@@ -642,44 +643,45 @@ if (!GROW){
 
 
 library(TTR)
+
+
 richy <- append(richy, length(unmatrixlist(matrix_list5)))
 
-if (length(richy)> 40){   ###### number of time steps before measuring
-  ema_values <- EMA(richy, n = 10)  # Smooth data
-  # Loop to check stabilization
-  for (t in 2:length(ema_values)) {
-    if (!is.na(ema_values[t]) && !is.na(ema_values[t-1])) {  # Skip NA values
-      change <- abs(ema_values[t] - ema_values[t-1])
+if (length(richy) > 50) {  # Ensure enough data points
+  ema_values <- EMA(richy, n = 10)  # Smooth population data
 
-      if (change < threshold) {
+  stable_count <- 0  # Track consecutive stable steps
+  required_stable_steps <- 10  # How many steps need to be stable before stopping
+  alpha <- threshold  # Set threshold as 1% of EMA
+
+  for (t in (11:length(ema_values))) {  # Start from where EMA is valid
+    if (!is.na(ema_values[t]) && !is.na(ema_values[t - 1])) {
+      relative_change <- abs(ema_values[t] - ema_values[t - 1]) / ema_values[t]  # % change
+
+      if (relative_change < alpha) {
+        stable_count <- stable_count + 1
+      } else {
+        stable_count <- 0  # Reset if change is significant
+      }
+
+      if (stable_count >= required_stable_steps) {  # Ensure stability over time
         print(paste("Stopping at time step:", t))
         return(
           list(
             tree = Ntree,
             trees = trees,
-            #final tree
-            #all trees by timeslice
             matrix_list = matrix_list6,
             mig = mig,
             migrates = migrates,
             exty = extinctsp,
-            symp = symp
+            symp = symp,
+            con = paste0("converged at ", ipa)
           )
         )
-
       }
     }
   }
 }
-
-
-
-
-
-
-
-
-
 
 
 
@@ -704,11 +706,11 @@ for(o in 1:length(matrix_list5)) {
 }
 
 
-if (ipa %in%  Asteroid:(Asteroid+aslength)) {
-  exparm22 <- Asteroidimpact
+if (ipa %in%  Asteroid) {
+  ExpSpParm2 <- Asteroidimpact
   print("asteroid hits")
 } else {
-  exparm22 <- exparm2
+  ExpSpParm2 <- reggie
 }
 
 if (ipa %in%  1:(1+timedelay)) {
@@ -741,7 +743,7 @@ if (ipa %in%  1:(1+timedelay)) {
           if (NegExpEx) {
             #extinctionp = exp(exparm * matrix_list5[[o]][, 1])
             #extinctionp = exparm2*matrix_list5[[o]][, 1]^exparm
-            extinctionp = 1- exp(exparm22[o]*matrix_list5[[o]][, 1]^exparm[o])
+            extinctionp = 1- exp(exparm2[o]*matrix_list5[[o]][, 1]^exparm[o])
             etip[[o]] <- extinctionp
           } else {
             extinctionp = constantEX
@@ -871,7 +873,8 @@ if (ipa %in%  1:(1+timedelay)) {
       mig = mig,
       migrates = migrates,
       exty = extinctsp,
-      symp = symp
+      symp = symp,
+      con = c("not converged")
     )
   )
 
