@@ -37,11 +37,11 @@ res1 <- simETBD(
   NegExpEx = TRUE,  # Population size dependent extinction
   exparm0 = -0.76, # Extinction parameter 0
   exparm1 = -0.56, # Extinction parameter 1
-  consp = .21,   # Constant probability of speciation (if size dependent speciation is disabled)
+  consp = 0.21,   # Constant probability of speciation (if size dependent speciation is disabled)
   ExpSp = TRUE,   # Size dependent speciation (at least one speciation mode must be TRUE)
   spparm1 =  -0.05, # Speciation parameter 1
   spparm0 = 0.95, # Speciation parameter 0
-  conex = .21,   # Constant probability of extinction (if size dependent extinctioin is disabled)
+  conex = 0.21,   # Constant probability of extinction (if size dependent extinctioin is disabled)
   splitparm = scaled_samples[e, 2] # Heritability parameter
 )
 
